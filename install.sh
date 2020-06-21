@@ -6,7 +6,7 @@ installSoftware() {
 }
 
 installSDA() {
-    curl -Lo- https://github.com/sunshineplan/sda-go/archive/v1.0.tar.gz | tar zxC /var/www
+    curl -Lo- https://github.com/sunshineplan/sda-go/archive/v1.0.0.tar.gz | tar zxC /var/www
     mv /var/www/sda-go* /var/www/sda-go
     cd /var/www/sda-go
     go build

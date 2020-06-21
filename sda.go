@@ -46,18 +46,22 @@ func handler(c *gin.Context) {
 				"%s has no duplicate value.\n\nDuration for process: %s.", source, time.Since(start)))
 			return
 		}
-		result = append(result,
-			sda.Resultf(r1, fmt.Sprintf(
-				"Duplicate values found in %s", source), "result:", time.Since(start))...)
+		result = append(result, sda.Resultf(r1, fmt.Sprintf(
+			"Duplicate values found in %s", source), "result:", time.Since(start))...)
 	case "rm_duplicates":
 		result = sda.RemoveDuplicates(data)
 	case "chk_consecutive":
+		ch := make(chan []string)
+		go func(data []string) {
+			_, result := sda.CheckDuplicates(data)
+			ch <- result
+		}(data)
 		r1, err := sda.CheckConsecutive(data)
 		if err != nil {
 			c.String(200, fmt.Sprintf("Error!\n%s contains non-numeric value. Please check!", source))
 			return
 		}
-		_, tmp := sda.CheckDuplicates(data)
+		tmp := <-ch
 		if len(tmp) > 0 {
 			result = append(result, fmt.Sprintf(
 				"[Warning]Duplicate values found in %[1]s.\nYou can \"Check Duplicates (%[1]s)\" to check it.\n\n",
@@ -76,8 +80,12 @@ func handler(c *gin.Context) {
 	case "compare":
 		ignoreDuplicates := c.PostForm("ignore_duplicates")
 		if ignoreDuplicates == "true" {
-			data1 = sda.RemoveDuplicates(data1)
+			ch := make(chan []string)
+			go func(data []string) {
+				ch <- sda.RemoveDuplicates(data)
+			}(data1)
 			data2 = sda.RemoveDuplicates(data2)
+			data1 = <-ch
 		}
 		switch mode := c.PostForm("mode"); mode {
 		case "comm":
@@ -89,8 +97,12 @@ func handler(c *gin.Context) {
 			result = append(result,
 				sda.Resultf(r1, "Common values found between two data.", "result:", time.Since(start))...)
 		case "diff":
-			r1 := sda.Compare(data1, data2, "diff")
+			ch := make(chan []string)
+			go func(data1, data2 []string) {
+				ch <- sda.Compare(data1, data2, "diff")
+			}(data1, data2)
 			r2 := sda.Compare(data2, data1, "diff")
+			r1 := <-ch
 			switch {
 			case len(append(r1, r2...)) == 0:
 				c.String(200, "Data1 is same as Data2.\n\nDuration for process: %s.", time.Since(start))

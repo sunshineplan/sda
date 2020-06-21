@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html lang='en'>
+
+<head>
+    <meta charset='utf-8'>
+    <meta name='description' content='Simple Data Analysis'>
+    <meta name='keywords' content='HTML, CSS, GO, JavaScript, jQuery, Bootstrap'>
+    <meta name='author' content='Sunshine'>
+    <meta name='viewport' content='width=device-width, initial-scale=1.0'>
+    <title>Simple Data Analysis</title>
+    <script src='https://cdn.jsdelivr.net/npm/jquery@3/dist/jquery.min.js'></script>
+    <script src='https://cdn.jsdelivr.net/npm/codemirror@5/lib/codemirror.min.js'></script>
+    <script src='https://cdn.jsdelivr.net/npm/codemirror@5/addon/display/placeholder.min.js'></script>
+    <script src='/static/script.js'></script>
+    <link href='https://cdn.jsdelivr.net/npm/codemirror@5/lib/codemirror.min.css' rel='stylesheet'>
+    <link href='https://cdn.jsdelivr.net/npm/bootstrap@4/dist/css/bootstrap.min.css' rel='stylesheet'>
+    <link href='/static/style.css' rel='stylesheet'>
+
+    <script>
+        $(() => {
+            inputA = CodeMirror.fromTextArea(document.getElementById('inputA'), { lineNumbers: true, lineWrapping: true });
+            inputB = CodeMirror.fromTextArea(document.getElementById('inputB'), { lineNumbers: true, lineWrapping: true });
+            $('#chk_duplicates').click(() => {
+                $('button').attr('disabled', true);
+                $.post('analysis', {
+                    func: 'chk_duplicates',
+                    source: $('input[name="source"]:checked').val(),
+                    data1: inputA.getValue(),
+                    data2: inputB.getValue()
+                }, data => {
+                    setTimeout(() => {
+                        $('#output').val(data);
+                        $('button').attr('disabled', false);
+                    }, 800);
+                });
+            });
+            $('#rm_duplicates').click(() => {
+                $('button').attr('disabled', true);
+                $.post('analysis', {
+                    func: 'rm_duplicates',
+                    source: $('input[name="source"]:checked').val(),
+                    data1: inputA.getValue(),
+                    data2: inputB.getValue()
+                }, data => {
+                    setTimeout(() => {
+                        $('#output').val(data);
+                        $('button').attr('disabled', false);
+                    }, 800);
+                });
+            });
+            $('#chk_consecutive').click(() => {
+                $('button').attr('disabled', true);
+                $.post('analysis', {
+                    func: 'chk_consecutive',
+                    source: $('input[name="source"]:checked').val(),
+                    data1: inputA.getValue(),
+                    data2: inputB.getValue()
+                }, data => {
+                    setTimeout(() => {
+                        $('#output').val(data);
+                        $('button').attr('disabled', false);
+                    }, 800);
+                });
+            });
+            $('#compare').click(() => {
+                $('button').attr('disabled', true);
+                $.post('analysis', {
+                    func: 'compare',
+                    mode: $('input[name="compare_mode"]:checked').val(),
+                    source: 'Data1,Data2',
+                    data1: inputA.getValue(),
+                    data2: inputB.getValue(),
+                    ignore_duplicates: $('#ignore_duplicates').prop('checked')
+                }, data => {
+                    setTimeout(() => {
+                        $('#output').val(data);
+                        $('button').attr('disabled', false);
+                    }, 800);
+                });
+            });
+            $('#diff').click(() => {
+                $('button').attr('disabled', true);
+                $.post('analysis', {
+                    func: 'diff',
+                    source: 'Data1,Data2',
+                    data1: inputA.getValue(),
+                    data2: inputB.getValue(),
+                }, data => {
+                    setTimeout(() => {
+                        $('#output').val(data);
+                        $('button').attr('disabled', false);
+                    }, 800);
+                });
+            });
+        });
+    </script>
+</head>
+
+<body>
+    <header class='navbar navbar-expand navbar-light flex-column flex-md-row'>
+        <a class='navbar-brand text-primary m-0 mr-md-3' href='' style='font-size:24px;'>Simple Data Analysis</a>
+    </header>
+    <div class='container-fluid'>
+        <div class='row'>
+            <div class='input col-3'>
+                <label for='inputA'>Data1</label>
+                <textarea id='inputA' placeholder='Paste content here...'></textarea>
+            </div>
+            <div class='input col-3 pl-0'>
+                <label for='inputB'>Data2</label>
+                <textarea id='inputB' placeholder='Paste content here...'></textarea>
+            </div>
+            <div class='input col-2 p-0 pt-5'>
+                <button id='chk_duplicates' type='button' class='btn btn-primary btn-block'>Check Duplicates</button>
+                <button id='rm_duplicates' type='button' class='btn btn-primary btn-block'>Remove Duplicates</button>
+                <button id='chk_consecutive' type='button' class='btn btn-primary btn-block'>Check Consecutive</button>
+                <div class='d-flex justify-content-around'>
+                    <label class='radio-inline m-0'>
+                        <input type='radio' name='source' value='Data1' checked> Data1
+                    </label>
+                    <label class='radio-inline m-0'>
+                        <input type='radio' name='source' value='Data2'> Data2
+                    </label>
+                </div>
+                <br>
+                <button id='compare' type='button' class='btn btn-primary btn-block'>Cross Compare</button>
+                <div class='d-flex justify-content-around'>
+                    <label class='radio-inline m-0'>
+                        <input type='radio' name='compare_mode' value='comm' checked> Comm
+                    </label>
+                    <label class='radio-inline m-0'>
+                        <input type='radio' name='compare_mode' value='diff'> Diff
+                    </label>
+                </div>
+                <div class='d-flex justify-content-around'>
+                    <label class='checkbox-inline m-0'>
+                        <input type='checkbox' id='ignore_duplicates' checked> Ignore Duplicates
+                    </label>
+                </div>
+                <br>
+                <button id='diff' type='button' class='btn btn-primary btn-block'>Diff</button>
+                <br>
+                <br>
+                <button onclick='copyResult()' type='button' class='btn btn-primary btn-block'>Copy Result</button>
+                <br>
+                <br>
+                <button onclick='swap()' type='button' class='btn btn-primary btn-block'>Data1<=>Data2</button>
+                <br>
+                <br>
+                <button onclick='clearAll()' type='button' class='btn btn-primary btn-block'>Clear</button>
+            </div>
+            <div class='col-4'>
+                <label for='output'>Result</label>
+                <textarea class='form-control' id='output' readonly></textarea>
+            </div>
+        </div>
+    </div>
+</body>
+
+</html>

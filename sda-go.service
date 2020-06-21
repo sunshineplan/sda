@@ -1,0 +1,10 @@
+[Unit]
+Description=uWSGI instance to serve Simple Data Analysis
+After=network.target
+
+[Service]
+Environment=GIN_MODE=release
+ExecStart=/var/www/sda-go/sda-go
+
+[Install]
+WantedBy=multi-user.target

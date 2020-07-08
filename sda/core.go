@@ -29,6 +29,14 @@ func CheckDuplicates(s []string) (map[string]int, []string) {
 		}
 	}
 	sort.SliceStable(ss, func(i, j int) bool {
+		if ss[i].Count == ss[j].Count {
+			ni, err1 := strconv.ParseFloat(ss[i].Value, 64)
+			nj, err2 := strconv.ParseFloat(ss[j].Value, 64)
+			if err1 == nil && err2 == nil {
+				return ni < nj
+			}
+			return ss[i].Value < ss[j].Value
+		}
 		return ss[i].Count > ss[j].Count
 	})
 
@@ -67,7 +75,7 @@ func Compare(data1, data2 []string, mode string) (result []string) {
 			}
 		}
 	}
-	sort.Strings(result)
+	Sort(result)
 	return
 }
 

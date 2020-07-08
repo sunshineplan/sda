@@ -34,3 +34,11 @@ func TestMakeRange(t *testing.T) {
 		t.Error("makeRange wrong")
 	}
 }
+
+func TestSort(t *testing.T) {
+	s := []string{"10", "2", "1", "a"}
+	Sort(s)
+	if !reflect.DeepEqual(s, []string{"1", "2", "10", "a"}) {
+		t.Error("Sort wrong")
+	}
+}

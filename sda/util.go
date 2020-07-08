@@ -14,7 +14,7 @@ func precheck(data []string) (result []string) {
 			result = append(result, v)
 		}
 	}
-	sort.Strings(result)
+	Sort(result)
 	return
 }
 
@@ -44,4 +44,16 @@ func makeRange(min, max int) []string {
 		s[i] = strconv.Itoa(min + i)
 	}
 	return s
+}
+
+// Sort strings or numbers in increasing order
+func Sort(s []string) {
+	sort.SliceStable(s, func(i, j int) bool {
+		fi, err1 := strconv.ParseFloat(s[i], 64)
+		fj, err2 := strconv.ParseFloat(s[j], 64)
+		if err1 == nil && err2 == nil {
+			return fi < fj
+		}
+		return s[i] < s[j]
+	})
 }

@@ -1,0 +1,52 @@
+name: Release
+
+on:
+  push:
+    branches: [ master ]
+  pull_request:
+    branches: [ master ]
+
+jobs:
+  build:
+    name: Create Release
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+
+      - name: Delete Old Release
+        uses: actions/github-script@v3
+        with:
+          script: |
+            let release
+            try {
+              release = await github.repos.getReleaseByTag({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                tag: 'v1.0'
+              })
+            } catch(e) {
+              console.error(e)
+              return
+            }
+
+            await github.repos.deleteRelease({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              release_id: release.data.id
+            })
+
+      - name: Get Current Date
+        id: date
+        run: echo "::set-output name=date::$(TZ=CST date +'%Y-%m-%d')"
+
+      - name: Create Release
+        uses: actions/create-release@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          tag_name: v1.0
+          release_name: ${{ steps.date.outputs.date }}
+          body: ${{ steps.date.outputs.date }}
+          draft: false
+          prerelease: false

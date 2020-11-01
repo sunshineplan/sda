@@ -1,5 +1,5 @@
 [Unit]
-Description=uWSGI instance to serve Simple Data Analysis
+Description=Instance to serve Simple Data Analysis
 After=network.target
 
 [Service]

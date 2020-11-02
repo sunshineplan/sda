@@ -11,8 +11,14 @@ jobs:
     name: Create Release
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout code
+      - name: Checkout Code
         uses: actions/checkout@v2
+
+      - name: Test Code
+        run: |
+          go mod download
+          go build ./...
+          go test -race ./...
 
       - name: Delete Old Release
         uses: actions/github-script@v3

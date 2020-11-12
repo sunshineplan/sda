@@ -4,7 +4,7 @@ After=network.target
 
 [Service]
 Environment=GIN_MODE=release
-ExecStart=/var/www/sda-go/sda-go
+ExecStart=/var/www/sda/webapp/sda
 
 [Install]
 WantedBy=multi-user.target

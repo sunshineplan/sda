@@ -22,7 +22,7 @@
             inputB = CodeMirror.fromTextArea(document.getElementById('inputB'), { lineNumbers: true, lineWrapping: true });
             $('#chk_duplicates').click(() => {
                 $('button').attr('disabled', true);
-                $.post('analysis', {
+                $.post('analyze', {
                     func: 'chk_duplicates',
                     source: $('input[name="source"]:checked').val(),
                     data1: inputA.getValue(),
@@ -36,7 +36,7 @@
             });
             $('#rm_duplicates').click(() => {
                 $('button').attr('disabled', true);
-                $.post('analysis', {
+                $.post('analyze', {
                     func: 'rm_duplicates',
                     source: $('input[name="source"]:checked').val(),
                     data1: inputA.getValue(),
@@ -50,7 +50,7 @@
             });
             $('#chk_consecutive').click(() => {
                 $('button').attr('disabled', true);
-                $.post('analysis', {
+                $.post('analyze', {
                     func: 'chk_consecutive',
                     source: $('input[name="source"]:checked').val(),
                     data1: inputA.getValue(),
@@ -64,7 +64,7 @@
             });
             $('#compare').click(() => {
                 $('button').attr('disabled', true);
-                $.post('analysis', {
+                $.post('analyze', {
                     func: 'compare',
                     mode: $('input[name="compare_mode"]:checked').val(),
                     source: 'Data1,Data2',
@@ -80,7 +80,7 @@
             });
             $('#diff').click(() => {
                 $('button').attr('disabled', true);
-                $.post('analysis', {
+                $.post('analyze', {
                     func: 'diff',
                     source: 'Data1,Data2',
                     data1: inputA.getValue(),

@@ -6,10 +6,10 @@ import (
 	"time"
 
 	"github.com/gin-gonic/gin"
-	"github.com/sunshineplan/sda-go/sda"
+	"github.com/sunshineplan/sda"
 )
 
-func handler(c *gin.Context) {
+func analyze(c *gin.Context) {
 	start := time.Now()
 
 	var source string

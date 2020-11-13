@@ -7,8 +7,12 @@
     height: calc(100% - 80px);
 }
 
-.row, .input {
+.row {
     height: 100%;
+}
+
+input {
+    margin: 0 5px;
 }
 
 textarea {

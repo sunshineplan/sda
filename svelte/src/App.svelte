@@ -9,11 +9,12 @@
     compare,
     diff,
   } from "./sda";
+  import { preprocess, format, copy } from "./utils";
 
   let data1: CodeMirror.EditorFromTextArea,
     data2: CodeMirror.EditorFromTextArea;
   let result = "";
-  let source = "data1";
+  let source = "Data1";
   let mode = "comm";
   let ignoreDuplicates = true;
   let loading = false;
@@ -33,101 +34,105 @@
         lineWrapping: true,
       }
     );
-    let data: string | null = localStorage.getItem("data1");
+    let data = localStorage.getItem("data1");
     if (data) data1.setValue(data);
     data = localStorage.getItem("data2");
     if (data) data2.setValue(data);
+    setTimeout(() => {
+      data1.refresh();
+      data2.refresh();
+    }, 200);
   });
 
-  function analyze(func: string): void {
+  function analyze(operation: string): void {
     loading = true;
-    processing();
-    const process = setInterval(() => processing(), 1000);
-    let output: string;
+    const process = processing();
+    const start = new Date().getTime();
+    let output = "";
     let r: string[];
-    switch (func) {
+    switch (operation) {
       case "chkDuplicates":
         let d: { [k: string]: number };
-        if (source == "data1") d = new chkDuplicates(data1.getValue()).run();
-        else d = new chkDuplicates(data2.getValue()).run();
+        if (source == "Data1")
+          d = new chkDuplicates(preprocess(data1.getValue())).run();
+        else d = new chkDuplicates(preprocess(data2.getValue())).run();
         if (!Object.keys(d).length)
           output = `${source} has no duplicate value.`;
         else
-          output = `Duplicate values found in ${source}.
-        \nresult:\n${Object.keys(d)
-          .map((key) => key + " appears " + d[key] + " times.")
-          .join("\n")}`;
+          output =
+            `Duplicate values found in ${source}.\n` +
+            format(
+              Object.keys(d).length,
+              Object.keys(d).map((key) => `${key} appears ${d[key]} times.`)
+            );
         break;
       case "rmDuplicates":
-        if (source == "data1") r = new rmDuplicates(data1.getValue()).run();
-        else r = new rmDuplicates(data2.getValue()).run();
+        if (source == "Data1")
+          r = new rmDuplicates(preprocess(data1.getValue())).run();
+        else r = new rmDuplicates(preprocess(data2.getValue())).run();
         output = r.join("\n");
         break;
       case "chkConsecutive":
-        if (source == "data1") r = new chkConsecutive(data1.getValue()).run();
-        else r = new chkConsecutive(data2.getValue()).run();
+        if (source == "Data1")
+          r = new chkConsecutive(preprocess(data1.getValue())).run();
+        else r = new chkConsecutive(preprocess(data2.getValue())).run();
         if (!r.length) output = `${source} contains consecutive numbers.`;
         else if (r.length == 1 && r[0] == "!Error!")
           output = `Error!\n${source} contains non-numeric value. Please check!`;
         else
           output = `${source} is not consecutive.
-          \nresult:\n${r.join("\n")}`;
+\nThe following numbers are missing:\n${r.join("\n")}`;
         break;
       case "compare":
         if (mode == "comm") {
-          r = new compare(data1.getValue(), data2.getValue()).run();
+          r = new compare(
+            preprocess(data1.getValue()),
+            preprocess(data2.getValue())
+          ).run();
           if (!r.length) output = "Two data contain no common value.";
           else
             output = `Common values found between two data.
-          \nresult:\n${r.join("\n")}`;
+${format(r.length, r)}`;
         } else {
           const r1 = new compare(
-            data1.getValue(),
-            data2.getValue(),
+            preprocess(data1.getValue()),
+            preprocess(data2.getValue()),
             mode,
             ignoreDuplicates
           ).run();
           const r2 = new compare(
-            data2.getValue(),
-            data1.getValue(),
+            preprocess(data2.getValue()),
+            preprocess(data1.getValue()),
             mode,
             ignoreDuplicates
           ).run();
           if (r1.length + r2.length == 0) {
             output = "Data1 is same as Data2.";
           } else if (!r1.length) {
-            output = `Data2 completely contains Data1.
-            \nData2 is more than Data1
-            \nresult:\n${r2.join("\n")}`;
+            output = `Data2 completely contains Data1.\n\nData2 is more than Data1
+${format(r2.length, r2)}`;
           } else if (!r2.length) {
-            output = `Data1 completely contains Data2.
-            \nData1 is more than Data2
-            \nresult:\n${r1.join("\n")}`;
+            output = `Data1 completely contains Data2.\n\nData1 is more than Data2\n${format(
+              r1.length,
+              r1
+            )}`;
           } else {
             output = `Two files have inconsistent content.
-            \nData1 is more than Data2
-            \nresult:\n${r1.join("\n")}
-            \nData2 is more than Data1
-            \nresult:\n${r2.join("\n")}`;
+\nData1 is more than Data2\n${format(r1.length, r1)}
+\nData2 is more than Data1\n${format(r2.length, r2)}`;
           }
         }
         break;
       case "diff":
-        r = new diff(data1.getValue(), data2.getValue()).run();
+        r = new diff(
+          preprocess(data1.getValue()),
+          preprocess(data2.getValue())
+        ).run();
         output = r.join("\n");
     }
-    setTimeout(() => {
-      clearInterval(process);
-      result = output;
-      loading = false;
-    }, 800);
-  }
-
-  async function copy() {
-    if (result.trim() !== "") {
-      await navigator.clipboard.writeText(result.trim());
-      alert("Text has been copied to clipboard.");
-    }
+    clearInterval(process);
+    result = output + `\n\nDuration for process: ${Date.now() - start}ms`;
+    loading = false;
   }
 
   function clear() {
@@ -142,11 +147,12 @@
     data2.setValue(data);
   }
 
-  function processing() {
-    result = "Processing";
-    setTimeout(() => (result = "Processing."), 250);
-    setTimeout(() => (result = "Processing.."), 500);
-    setTimeout(() => (result = "Processing..."), 750);
+  function processing(): number {
+    return setInterval(() => {
+      let dots = result.split("Processing").length + 1;
+      if (dots >= 4) dots -= 4;
+      result = "Processing" + ".".repeat(dots);
+    }, 200);
   }
 </script>
 
@@ -191,12 +197,12 @@
           disabled={loading}>Check Consecutive</button>
         <div class="d-flex justify-content-around">
           <div>
-            <input type="radio" bind:group={source} value="data1" id="data1" />
-            <label class="m-0" for="data1">Data1</label>
+            <input type="radio" bind:group={source} value="Data1" id="Data1" />
+            <label class="m-0" for="Data1">Data1</label>
           </div>
           <div>
-            <input type="radio" bind:group={source} value="data2" id="data2" />
-            <label class="m-0" for="data2">Data2</label>
+            <input type="radio" bind:group={source} value="Data2" id="Data2" />
+            <label class="m-0" for="Data2">Data2</label>
           </div>
         </div>
         <br />
@@ -233,7 +239,7 @@
         <br />
         <br />
         <button
-          on:click={copy}
+          on:click={async () => copy(result)}
           type="button"
           class="btn btn-primary btn-block"
           disabled={loading}>Copy Result</button>
@@ -254,11 +260,7 @@
       </div>
       <div class="col-4">
         <label for="result">Result</label>
-        <textarea
-          class="form-control"
-          id="result"
-          bind:value={result}
-          readonly />
+        <pre id="result">{result}</pre>
       </div>
     </div>
   </div>

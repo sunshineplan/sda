@@ -11,6 +11,10 @@
     height: 100%;
 }
 
+.row>div {
+    height: 100%;
+}
+
 input {
     margin: 0 5px;
 }
@@ -22,6 +26,18 @@ textarea {
     border: 1px solid #007bff !important;
 }
 
+pre {
+    font-family: monospace;
+    height: calc(100% - 47px);
+    padding: .375rem .75rem;
+    font-size: 100%;
+    color: #495057;
+    border: 1px solid #007bff;
+    border-radius: .25em;
+    background-color: #e9ecef;
+    cursor: text;
+}
+
 .CodeMirror {
     height: calc(100% - 47px);
     border: 1px solid #007bff;
@@ -29,8 +45,8 @@ textarea {
     cursor: text;
 }
 
-.CodeMirror-focused {
-    box-shadow: 0 0 0 0.2rem rgba(0,123,255,.25);
+.CodeMirror-focused, #result:hover {
+    box-shadow: 0 0 0 0.2rem rgba(0, 123, 255, .25);
     outline: 0;
 }
 

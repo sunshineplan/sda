@@ -1,17 +1,7 @@
 namespace utils {
-  export function split(data: string): string[] {
-    return data.split('\n')
-  }
-
-  export function precheck(data: string[]): string[] {
-    data = data.filter(i => i.trim() != '')
-    sort(data)
-    return data
-  }
-
   export function contains(data: string[], value: string): boolean {
     for (let i = 0; i < data.length; i++) {
-      if (data[i] = value) return true
+      if (data[i] == value) return true
     }
     return false
   }
@@ -20,9 +10,26 @@ namespace utils {
     return [...Array(Number(max) - Number(min) + 1).keys()].map(i => i + Number(min)).map(String)
   }
 
-  export function sort(data: string[]) {
+  export function sort(data: string[]): string[] {
     let collator = new Intl.Collator(undefined, { numeric: true, sensitivity: 'base' })
     data.sort(collator.compare)
+    return data
+  }
+}
+
+export function preprocess(data: string): string[] {
+  return utils.sort(data.split('\n').map(i => i.trim()).filter(i => i != ''))
+}
+
+export function format(length: number, content: string[]): string {
+  return `\nTotal ${length} ${length == 1 ? "record" : "records"}
+\nresult:\n${content.join("\n")}`
+}
+
+export async function copy(data: string) {
+  if (data.trim() !== "") {
+    await navigator.clipboard.writeText(data.trim());
+    alert("Text has been copied to clipboard.");
   }
 }
 

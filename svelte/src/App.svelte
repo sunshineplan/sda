@@ -132,7 +132,8 @@ ${format(r2.length, r2)}`;
           .replace(`${"=".repeat(67)}\n`, "");
     }
     clearInterval(process);
-    result = output + `\n\nDuration for process: ${Date.now() - start}ms`;
+    if (operation != "rmDuplicates")
+      result = output + `\n\nDuration for process: ${Date.now() - start}ms`;
     loading = false;
   }
 

@@ -17,7 +17,8 @@ namespace utils {
   }
 }
 
-export function preprocess(data: string): string[] {
+export function preprocess(data: string, sort = true): string[] {
+  if (!sort) return data.split('\n').map(i => i.trim()).filter(i => i != '')
   return utils.sort(data.split('\n').map(i => i.trim()).filter(i => i != ''))
 }
 

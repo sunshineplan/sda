@@ -124,7 +124,10 @@ ${format(r2.length, r2)}`;
         }
         break;
       case "diff":
-        output = new diff(data1.getValue(), data2.getValue())
+        output = new diff(
+          preprocess(data1.getValue(), false).join("\n"),
+          preprocess(data2.getValue(), false).join("\n")
+        )
           .run()
           .replace(`${"=".repeat(67)}\n`, "");
     }

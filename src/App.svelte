@@ -2,6 +2,7 @@
   import CodeMirror from "codemirror";
   import "codemirror/addon/display/placeholder";
   import { onMount } from "svelte";
+  import { set_store_value } from "svelte/internal";
   import {
     chkDuplicates,
     rmDuplicates,
@@ -151,8 +152,10 @@ ${format(r2.length, r2)}`;
 
   function processing(): number {
     return setInterval(() => {
-      let dots = result.split("Processing").length + 1;
-      if (dots >= 4) dots -= 4;
+      const s = result.split("Processing");
+      let dots = s.length >= 2 ? s[1].length : 0;
+      if (dots < 3) dots++;
+      else dots -= 3;
       result = "Processing" + ".".repeat(dots);
     }, 200);
   }

@@ -1,0 +1,80 @@
+name: Release
+
+on:
+  workflow_run:
+    workflows: [ "Test" ]
+    branches: [ main ]
+    types: 
+      - completed
+
+jobs:
+  release:
+    if: ${{ github.event.workflow_run.conclusion == 'success' }}
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v2
+
+      - name: Setup Node
+        uses: actions/setup-node@v1
+        with:
+          node-version: '15'
+
+      - name: Build
+        run: |
+          npm i --no-package-lock
+          npm run build
+
+      - name: Delete Old Release
+        uses: actions/github-script@v3
+        with:
+          script: |
+            let release
+            try {
+              release = await github.repos.getReleaseByTag({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                tag: 'v1.0'
+              })
+            } catch(e) {
+              console.error(e)
+              return
+            }
+
+            await github.repos.deleteRelease({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              release_id: release.data.id
+            })
+
+            await github.git.deleteRef({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              ref: 'tags/v1.0'
+            })
+
+      - name: Get Current Date
+        id: date
+        run: echo "::set-output name=date::$(TZ=CST date +'%Y-%m-%d')"
+
+      - name: Create Release
+        id: create_release
+        uses: actions/create-release@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          tag_name: v1.0
+          release_name: ${{ steps.date.outputs.date }}
+          body: ${{ steps.date.outputs.date }}
+          draft: false
+          prerelease: false
+
+      - name: Upload Release Asset
+        uses: actions/upload-release-asset@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          upload_url: ${{ steps.create_release.outputs.upload_url }}
+          asset_path: ./public/build/bundle.js
+          asset_name: bundle.js
+          asset_content_type: application/javascript

@@ -124,11 +124,9 @@ ${format(r2.length, r2)}`;
         }
         break;
       case "diff":
-        r = new diff(
-          preprocess(data1.getValue()),
-          preprocess(data2.getValue())
-        ).run();
-        output = r.join("\n");
+        output = new diff(data1.getValue(), data2.getValue())
+          .run()
+          .replace(`${"=".repeat(67)}\n`, "");
     }
     clearInterval(process);
     result = output + `\n\nDuration for process: ${Date.now() - start}ms`;

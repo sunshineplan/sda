@@ -1,7 +1,8 @@
+import { createTwoFilesPatch } from 'diff'
 import utils from './utils'
 
 interface sda {
-  run(): string[] | { [k: string]: number }
+  run(): string | string[] | { [k: string]: number }
 }
 
 export class chkDuplicates implements sda {
@@ -88,14 +89,14 @@ export class chkConsecutive implements sda {
 }
 
 export class diff implements sda {
-  data1: string[]
-  data2: string[]
-  constructor(data1: string[], data2: string[]) {
+  data1: string
+  data2: string
+  constructor(data1: string, data2: string) {
     this.data1 = data1
     this.data2 = data2
   }
-  run(): string[] {
-    return this.data1
+  run(): string {
+    return createTwoFilesPatch('Data1', 'Data2', this.data1, this.data2)
   }
 }
 

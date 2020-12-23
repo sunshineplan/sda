@@ -24,4 +24,5 @@ jobs:
       - name: Test Code
         run: |
           npm i --no-package-lock
+          npm run test
           npm run build

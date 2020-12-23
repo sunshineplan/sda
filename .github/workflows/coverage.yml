@@ -1,0 +1,31 @@
+name: Coverage
+
+on:
+  workflow_run:
+    workflows: [ "Test" ]
+    branches: [ main ]
+    types: 
+      - completed
+
+jobs:
+  coverage:
+    if: ${{ github.event.workflow_run.conclusion == 'success' }}
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v2
+
+      - name: Setup Node
+        uses: actions/setup-node@v1
+        with:
+          node-version: '15'
+
+      - name: Run Unit tests
+        run: |
+          npm i --no-package-lock
+          npm run test-coverage
+
+      - name: Send coverage
+        uses: coverallsapp/github-action@master
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}

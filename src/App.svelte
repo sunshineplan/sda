@@ -46,6 +46,29 @@
   });
 
   function analyze(operation: string): void {
+    const d1 = preprocess(data1.getValue());
+    const d2 = preprocess(data2.getValue());
+    switch (operation) {
+      case "chkDuplicates":
+      case "rmDuplicates":
+      case "chkConsecutive":
+        if (source == "Data1" && !d1.length) {
+          result = "Data1 is empty.\nPlease enter something...";
+          return;
+        } else if (!d2.length) {
+          result = "Data2 is empty.\nPlease enter something...";
+          return;
+        }
+        break;
+      default:
+        if (!d1.length) {
+          result = "Data1 is empty.\nPlease enter something...";
+          return;
+        } else if (!d2.length) {
+          result = "Data2 is empty.\nPlease enter something...";
+          return;
+        }
+    }
     loading = true;
     const process = processing();
     const start = new Date().getTime();
@@ -54,9 +77,8 @@
     switch (operation) {
       case "chkDuplicates":
         let d: { [k: string]: number };
-        if (source == "Data1")
-          d = new chkDuplicates(preprocess(data1.getValue())).run();
-        else d = new chkDuplicates(preprocess(data2.getValue())).run();
+        if (source == "Data1") d = new chkDuplicates(d1).run();
+        else d = new chkDuplicates(d2).run();
         if (!Object.keys(d).length)
           output = `${source} has no duplicate value.`;
         else
@@ -68,15 +90,13 @@
             );
         break;
       case "rmDuplicates":
-        if (source == "Data1")
-          r = new rmDuplicates(preprocess(data1.getValue())).run();
-        else r = new rmDuplicates(preprocess(data2.getValue())).run();
+        if (source == "Data1") r = new rmDuplicates(d1).run();
+        else r = new rmDuplicates(d2).run();
         output = r.join("\n");
         break;
       case "chkConsecutive":
-        if (source == "Data1")
-          r = new chkConsecutive(preprocess(data1.getValue())).run();
-        else r = new chkConsecutive(preprocess(data2.getValue())).run();
+        if (source == "Data1") r = new chkConsecutive(d1).run();
+        else r = new chkConsecutive(d2).run();
         if (!r.length) output = `${source} contains consecutive numbers.`;
         else if (r.length == 1 && r[0] == "!Error!")
           output = `Error!\n${source} contains non-numeric value. Please check!`;
@@ -86,25 +106,14 @@
         break;
       case "compare":
         if (mode == "comm") {
-          r = new compareComm(
-            preprocess(data1.getValue()),
-            preprocess(data2.getValue())
-          ).run();
+          r = new compareComm(d1, d2).run();
           if (!r.length) output = "Two data contain no common value.";
           else
             output = `Common values found between two data.
 ${format(r.length, r)}`;
         } else {
-          const r1 = new compareDiff(
-            preprocess(data1.getValue()),
-            preprocess(data2.getValue()),
-            ignoreDuplicates
-          ).run();
-          const r2 = new compareDiff(
-            preprocess(data2.getValue()),
-            preprocess(data1.getValue()),
-            ignoreDuplicates
-          ).run();
+          const r1 = new compareDiff(d1, d2, ignoreDuplicates).run();
+          const r2 = new compareDiff(d2, d1, ignoreDuplicates).run();
           if (r1.length + r2.length == 0) {
             output = "Data1 is same as Data2.";
           } else if (!r1.length) {
@@ -123,10 +132,7 @@ ${format(r2.length, r2)}`;
         }
         break;
       case "diff":
-        output = new diff(
-          preprocess(data1.getValue()).join("\n") + "\n",
-          preprocess(data2.getValue()).join("\n") + "\n"
-        )
+        output = new diff(d1.join("\n") + "\n", d2.join("\n") + "\n")
           .run()
           .replace(`${"=".repeat(67)}\n`, "");
     }
@@ -238,6 +244,7 @@ ${format(r2.length, r2)}`;
             <input
               type="checkbox"
               bind:checked={ignoreDuplicates}
+              disabled={mode == 'comm'}
               id="ignore_duplicates" />
             <label class="m-0" for="ignore_duplicates">Ignore Duplicates</label>
           </div>

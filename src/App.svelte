@@ -2,7 +2,6 @@
   import CodeMirror from "codemirror";
   import "codemirror/addon/display/placeholder";
   import { onMount } from "svelte";
-  import { set_store_value } from "svelte/internal";
   import {
     chkDuplicates,
     rmDuplicates,
@@ -42,7 +41,7 @@
     setTimeout(() => {
       data1.refresh();
       data2.refresh();
-    }, 200);
+    }, 500);
   });
 
   function analyze(operation: string): void {
@@ -265,7 +264,11 @@ ${format(r2.length, r2)}`;
       </div>
       <div class="col-4">
         <label for="result">Result</label>
-        <pre id="result">{result}</pre>
+        <textarea
+          class="form-control"
+          id="result"
+          bind:value={result}
+          readonly />
       </div>
     </div>
   </div>

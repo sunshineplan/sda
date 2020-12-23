@@ -28,10 +28,11 @@ export function format(length: number, content: string[]): string {
 }
 
 export async function copy(data: string) {
-  if (data.trim() !== "") {
-    await navigator.clipboard.writeText(data.trim());
-    alert("Text has been copied to clipboard.");
-  }
+  if (data.trim() !== "")
+    if (navigator.clipboard) {
+      await navigator.clipboard.writeText(data.trim());
+      alert("Text has been copied to clipboard.");
+    } else alert("This function requires a secure origin. (HTTPS or localhost)");
 }
 
 export default utils

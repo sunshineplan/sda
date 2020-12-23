@@ -6,10 +6,11 @@
     chkDuplicates,
     rmDuplicates,
     chkConsecutive,
-    compare,
+    compareDiff,
+    compareComm,
     diff,
   } from "./sda";
-  import { preprocess, format, copy } from "./utils";
+  import { preprocess, format } from "./utils";
 
   let data1: CodeMirror.EditorFromTextArea,
     data2: CodeMirror.EditorFromTextArea;
@@ -85,7 +86,7 @@
         break;
       case "compare":
         if (mode == "comm") {
-          r = new compare(
+          r = new compareComm(
             preprocess(data1.getValue()),
             preprocess(data2.getValue())
           ).run();
@@ -94,16 +95,14 @@
             output = `Common values found between two data.
 ${format(r.length, r)}`;
         } else {
-          const r1 = new compare(
+          const r1 = new compareDiff(
             preprocess(data1.getValue()),
             preprocess(data2.getValue()),
-            mode,
             ignoreDuplicates
           ).run();
-          const r2 = new compare(
+          const r2 = new compareDiff(
             preprocess(data2.getValue()),
             preprocess(data1.getValue()),
-            mode,
             ignoreDuplicates
           ).run();
           if (r1.length + r2.length == 0) {
@@ -125,8 +124,8 @@ ${format(r2.length, r2)}`;
         break;
       case "diff":
         output = new diff(
-          preprocess(data1.getValue(), false).join("\n"),
-          preprocess(data2.getValue(), false).join("\n")
+          preprocess(data1.getValue()).join("\n") + "\n",
+          preprocess(data2.getValue()).join("\n") + "\n"
         )
           .run()
           .replace(`${"=".repeat(67)}\n`, "");
@@ -147,6 +146,15 @@ ${format(r2.length, r2)}`;
     const data = data1.getValue();
     data1.setValue(data2.getValue());
     data2.setValue(data);
+  }
+
+  async function copy() {
+    if (result.trim() !== "")
+      if (navigator.clipboard) {
+        await navigator.clipboard.writeText(result.trim());
+        alert("Text has been copied to clipboard.");
+      } else
+        alert("This function requires a secure origin. (HTTPS or localhost)");
   }
 
   function processing(): number {
@@ -243,7 +251,7 @@ ${format(r2.length, r2)}`;
         <br />
         <br />
         <button
-          on:click={async () => copy(result)}
+          on:click={copy}
           type="button"
           class="btn btn-primary btn-block"
           disabled={loading}>Copy Result</button>

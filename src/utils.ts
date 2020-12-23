@@ -17,22 +17,13 @@ namespace utils {
   }
 }
 
-export function preprocess(data: string, sort = true): string[] {
-  if (!sort) return data.split('\n').map(i => i.trim()).filter(i => i != '')
-  return utils.sort(data.split('\n').map(i => i.trim()).filter(i => i != ''))
+export function preprocess(data: string): string[] {
+  return data.split('\n').map(i => i.trim()).filter(i => i != '')
 }
 
 export function format(length: number, content: string[]): string {
-  return `\nTotal ${length} ${length == 1 ? "record" : "records"}
-\nresult:\n${content.join("\n")}`
-}
-
-export async function copy(data: string) {
-  if (data.trim() !== "")
-    if (navigator.clipboard) {
-      await navigator.clipboard.writeText(data.trim());
-      alert("Text has been copied to clipboard.");
-    } else alert("This function requires a secure origin. (HTTPS or localhost)");
+  return `\nTotal ${length} ${length == 1 ? 'record' : 'records'}
+\nresult:\n${content.join('\n')}`
 }
 
 export default utils

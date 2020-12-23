@@ -34,39 +34,44 @@ export class rmDuplicates implements sda {
   run(): string[] { return [...new Set(this.data)] }
 }
 
-export class compare implements sda {
+export class compareDiff implements sda {
   data1: string[]
   data2: string[]
-  mode: string
   ignoreDuplicates: boolean
-  constructor(data1: string[], data2: string[], mode: string = 'comm', ignoreDuplicates: boolean = true) {
+  constructor(data1: string[], data2: string[], ignoreDuplicates: boolean = true) {
     if (ignoreDuplicates) {
-      this.data1 = new rmDuplicates(data1).run()
-      this.data2 = new rmDuplicates(data2).run()
+      this.data1 = [...new Set(data1)]
+      this.data2 = [...new Set(data2)]
     } else {
       this.data1 = data1
       this.data2 = data2
     }
-    this.mode = mode
     this.ignoreDuplicates = ignoreDuplicates
   }
   run(): string[] {
+    const data = [...this.data1]
+    for (let i = 0; i < this.data2.length; i++)
+      if (utils.contains(data, this.data2[i]))
+        data.splice(data.indexOf(this.data2[i]), 1)
+    return utils.sort(data)
+  }
+}
+
+export class compareComm implements sda {
+  data1: string[]
+  data2: string[]
+  constructor(data1: string[], data2: string[]) {
+    this.data1 = data1
+    this.data2 = data2
+  }
+  run(): string[] {
     let result: string[] = []
-    if (this.mode == 'diff') {
-      const data = [...this.data1]
-      for (let i = 0; i < this.data2.length; i++)
-        if (utils.contains(data, this.data2[i]))
-          data.splice(data.indexOf(this.data2[i]), 1)
-      result = data
-    } else {
-      let data: string[]
-      if (this.ignoreDuplicates) data = this.data1
-      else data = [...new Set(this.data1)]
-      for (let i = 0; i < data.length; i++) {
-        if (utils.contains(this.data2, data[i])) result.push(data[i])
-      }
+    let data: string[]
+    data = [...new Set(this.data1)]
+    for (let i = 0; i < data.length; i++) {
+      if (utils.contains(this.data2, data[i])) result.push(data[i])
     }
-    return result
+    return utils.sort(result)
   }
 }
 
@@ -80,11 +85,7 @@ export class chkConsecutive implements sda {
       const n = Number(this.data[i])
       if (isNaN(n)) return ['!Error!']
     }
-    return new compare(
-      utils.range(this.data[0], this.data[this.data.length - 1]),
-      this.data,
-      'diff'
-    ).run()
+    return new compareDiff(utils.range(this.data[0], this.data[this.data.length - 1]), this.data).run()
   }
 }
 

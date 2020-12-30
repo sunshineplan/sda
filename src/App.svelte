@@ -55,7 +55,7 @@
         if (source == "Data1" && !d1.length) {
           result = "Data1 is empty.\nPlease enter something...";
           return;
-        } else if (!d2.length) {
+        } else if (source == "Data2" && !d2.length) {
           result = "Data2 is empty.\nPlease enter something...";
           return;
         }

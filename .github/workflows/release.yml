@@ -78,3 +78,9 @@ jobs:
           asset_path: ./public/build/bundle.js
           asset_name: bundle.js
           asset_content_type: application/javascript
+
+      - name: GitHub Pages Deploy
+        uses: maxheld83/ghpages@v0.3.0
+        env:
+          BUILD_DIR: "public/"
+          GH_PAT: ${{ secrets.GH_PAT }}

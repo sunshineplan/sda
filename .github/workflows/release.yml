@@ -20,11 +20,6 @@ jobs:
         with:
           node-version: '15'
 
-      - name: Build
-        run: |
-          npm i --no-package-lock
-          npm run build
-
       - name: Delete Old Release
         uses: actions/github-script@v3
         with:
@@ -53,9 +48,13 @@ jobs:
               ref: 'tags/v1.0'
             })
 
-      - name: Get Current Date
-        id: date
-        run: echo "::set-output name=date::$(TZ=CST date +'%Y-%m-%d')"
+      - name: Build
+        id: build
+        run: |
+          npm i --no-package-lock
+          npm run build
+          tar cvzf release.tar.gz public/* scripts
+          echo "::set-output name=date::$(TZ=CST date +'%Y-%m-%d')"
 
       - name: Create Release
         id: create_release
@@ -64,8 +63,8 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
           tag_name: v1.0
-          release_name: ${{ steps.date.outputs.date }}
-          body: ${{ steps.date.outputs.date }}
+          release_name: ${{ steps.build.outputs.date }}
+          body: ${{ steps.build.outputs.date }}
           draft: false
           prerelease: false
 
@@ -75,9 +74,9 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
           upload_url: ${{ steps.create_release.outputs.upload_url }}
-          asset_path: ./public/build/bundle.js
-          asset_name: bundle.js
-          asset_content_type: application/javascript
+          asset_path: ./release.tar.gz
+          asset_name: release.tar.gz
+          asset_content_type: application/gzip
 
       - name: GitHub Pages Deploy
         uses: maxheld83/ghpages@v0.3.0

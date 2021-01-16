@@ -5,11 +5,8 @@ installSoftware() {
 }
 
 installSDA() {
-    curl -Lo /var/www/sda/build/bundle.js https://github.com/sunshineplan/sda/releases/download/v1.0/bundle.js --create-dirs
-    cd /var/www/sda
-    curl -LO https://raw.githubusercontent.com/sunshineplan/sda/main/public/style.css
-    curl -LO https://raw.githubusercontent.com/sunshineplan/sda/main/public/index.html
-    curl -LO https://raw.githubusercontent.com/sunshineplan/sda/main/scripts/sda.conf
+    mkdir -p /var/www/sda
+    curl -Lo- https://github.com/sunshineplan/sda/releases/download/v1.0/release.tar.gz | tar zxC /var/www/sda
 }
 
 writeLogrotateScrip() {
@@ -28,7 +25,7 @@ writeLogrotateScrip() {
 }
 
 setupNGINX() {
-    cp -s /var/www/sda/sda.conf /etc/nginx/conf.d
+    cp -s /var/www/sda/scripts/sda.conf /etc/nginx/conf.d
     sed -i "s/\$domain/$domain/" /var/www/sda/sda.conf
     service nginx reload
 }

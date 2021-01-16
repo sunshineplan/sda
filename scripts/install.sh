@@ -26,7 +26,7 @@ writeLogrotateScrip() {
 
 setupNGINX() {
     cp -s /var/www/sda/scripts/sda.conf /etc/nginx/conf.d
-    sed -i "s/\$domain/$domain/" /var/www/sda/sda.conf
+    sed -i "s/\$domain/$domain/" /var/www/sda/scripts/sda.conf
     service nginx reload
 }
 

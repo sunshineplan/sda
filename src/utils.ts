@@ -1,27 +1,27 @@
 namespace utils {
-  export function contains(data: string[], value: string): boolean {
+  export const contains = (data: string[], value: string) => {
     for (let i = 0; i < data.length; i++) {
       if (data[i] == value) return true
     }
     return false
   }
 
-  export function range(min: string, max: string): string[] {
+  export const range = (min: string, max: string) => {
     return [...Array(Number(max) - Number(min) + 1).keys()].map(i => i + Number(min)).map(String)
   }
 
-  export function sort(data: string[]): string[] {
+  export const sort = (data: string[]) => {
     let collator = new Intl.Collator(undefined, { numeric: true, sensitivity: 'base' })
     data.sort(collator.compare)
     return data
   }
 }
 
-export function preprocess(data: string): string[] {
+export const preprocess = (data: string) => {
   return data.split('\n').map(i => i.trim()).filter(i => i != '')
 }
 
-export function format(length: number, content: string[]): string {
+export const format = (length: number, content: string[]) => {
   return `\nTotal ${length} ${length == 1 ? 'record' : 'records'}
 \nresult:\n${content.join('\n')}`
 }

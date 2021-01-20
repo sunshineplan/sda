@@ -42,10 +42,10 @@
     setTimeout(() => {
       data1.refresh();
       data2.refresh();
-    }, 500);
+    }, 600);
   });
 
-  function analyze(operation: string): void {
+  const analyze = (operation: string) => {
     const d1 = preprocess(data1.getValue());
     const d2 = preprocess(data2.getValue());
     switch (operation) {
@@ -140,30 +140,30 @@ ${format(r2.length, r2)}`;
     if (operation == "rmDuplicates") result = output;
     else result = output + `\n\nDuration for process: ${Date.now() - start}ms`;
     loading = false;
-  }
+  };
 
-  function clear() {
+  const clear = () => {
     data1.setValue("");
     data2.setValue("");
     result = "";
-  }
+  };
 
-  function swap() {
+  const swap = () => {
     const data = data1.getValue();
     data1.setValue(data2.getValue());
     data2.setValue(data);
-  }
+  };
 
-  async function copy() {
+  const copy = async () => {
     if (result.trim() !== "")
       if (navigator.clipboard) {
         await navigator.clipboard.writeText(result.trim());
         alert("Text has been copied to clipboard.");
       } else
         alert("This function requires a secure origin. (HTTPS or localhost)");
-  }
+  };
 
-  function processing(): number {
+  const processing = () => {
     return setInterval(() => {
       const s = result.split("Processing");
       let dots = s.length >= 2 ? s[1].length : 0;
@@ -171,120 +171,164 @@ ${format(r2.length, r2)}`;
       else dots -= 3;
       result = "Processing" + ".".repeat(dots);
     }, 200);
-  }
+  };
 </script>
 
 <svelte:window
   on:beforeunload={() => {
-    localStorage.setItem('data1', data1.getValue());
-    localStorage.setItem('data2', data2.getValue());
-  }} />
+    localStorage.setItem("data1", data1.getValue());
+    localStorage.setItem("data2", data2.getValue());
+  }}
+/>
 
-<main>
-  <header class="navbar navbar-expand navbar-light flex-column flex-md-row">
-    <a
-      class="navbar-brand text-primary m-0 mr-md-3"
-      href="/"
-      style="font-size:24px">Simple Data Analysis</a>
-  </header>
-  <div class="container-fluid">
-    <div class="row">
-      <div class="col-3">
-        <label for="inputA">Data1</label>
-        <textarea id="inputA" placeholder="Paste content here..." />
-      </div>
-      <div class="col-3 pl-0">
-        <label for="inputB">Data2</label>
-        <textarea id="inputB" placeholder="Paste content here..." />
-      </div>
-      <div class="col-2 p-0 pt-5">
-        <button
-          on:click={() => analyze('chkDuplicates')}
-          type="button"
-          class="btn btn-primary btn-block"
-          disabled={loading}>Check Duplicates</button>
-        <button
-          on:click={() => analyze('rmDuplicates')}
-          type="button"
-          class="btn btn-primary btn-block"
-          disabled={loading}>Remove Duplicates</button>
-        <button
-          on:click={() => analyze('chkConsecutive')}
-          type="button"
-          class="btn btn-primary btn-block"
-          disabled={loading}>Check Consecutive</button>
-        <div class="d-flex justify-content-around">
-          <div>
-            <input type="radio" bind:group={source} value="Data1" id="Data1" />
-            <label class="m-0" for="Data1">Data1</label>
-          </div>
-          <div>
-            <input type="radio" bind:group={source} value="Data2" id="Data2" />
-            <label class="m-0" for="Data2">Data2</label>
-          </div>
+<header class="navbar navbar-expand navbar-light flex-column flex-md-row">
+  <a
+    class="navbar-brand text-primary m-0 mr-md-3"
+    href="/"
+    style="font-size:24px"> Simple Data Analysis </a>
+</header>
+<div class="container-fluid">
+  <div class="row">
+    <div class="col-3">
+      <label for="inputA">Data1</label>
+      <textarea id="inputA" placeholder="Paste content here..." />
+    </div>
+    <div class="col-3 pl-0">
+      <label for="inputB">Data2</label>
+      <textarea id="inputB" placeholder="Paste content here..." />
+    </div>
+    <div class="col-2 p-0 pt-5">
+      <button
+        on:click={() => analyze("chkDuplicates")}
+        type="button"
+        class="btn btn-primary btn-block"
+        disabled={loading}> Check Duplicates </button>
+      <button
+        on:click={() => analyze("rmDuplicates")}
+        type="button"
+        class="btn btn-primary btn-block"
+        disabled={loading}> Remove Duplicates </button>
+      <button
+        on:click={() => analyze("chkConsecutive")}
+        type="button"
+        class="btn btn-primary btn-block"
+        disabled={loading}> Check Consecutive </button>
+      <div class="d-flex justify-content-around">
+        <div>
+          <input type="radio" bind:group={source} value="Data1" id="Data1" />
+          <label class="m-0" for="Data1">Data1</label>
         </div>
-        <br />
-        <button
-          on:click={() => analyze('compare')}
-          type="button"
-          class="btn btn-primary btn-block"
-          disabled={loading}>Cross Compare</button>
-        <div class="d-flex justify-content-around">
-          <div>
-            <input type="radio" bind:group={mode} value="comm" id="comm" />
-            <label class="m-0" for="comm">Comm</label>
-          </div>
-          <div>
-            <input type="radio" bind:group={mode} value="diff" id="diff" />
-            <label class="m-0" for="diff">Diff</label>
-          </div>
+        <div>
+          <input type="radio" bind:group={source} value="Data2" id="Data2" />
+          <label class="m-0" for="Data2">Data2</label>
         </div>
-        <div class="d-flex justify-content-around">
-          <div>
-            <input
-              type="checkbox"
-              bind:checked={ignoreDuplicates}
-              disabled={mode == 'comm'}
-              id="ignore_duplicates" />
-            <label class="m-0" for="ignore_duplicates">Ignore Duplicates</label>
-          </div>
+      </div>
+      <br />
+      <button
+        on:click={() => analyze("compare")}
+        type="button"
+        class="btn btn-primary btn-block"
+        disabled={loading}> Cross Compare </button>
+      <div class="d-flex justify-content-around">
+        <div>
+          <input type="radio" bind:group={mode} value="comm" id="comm" />
+          <label class="m-0" for="comm">Comm</label>
         </div>
-        <br />
-        <button
-          on:click={() => analyze('diff')}
-          type="button"
-          class="btn btn-primary btn-block"
-          disabled={loading}>Diff</button>
-        <br />
-        <br />
-        <button
-          on:click={copy}
-          type="button"
-          class="btn btn-primary btn-block"
-          disabled={loading}>Copy Result</button>
-        <br />
-        <br />
-        <button
-          on:click={swap}
-          type="button"
-          class="btn btn-primary btn-block"
-          disabled={loading}>{@html 'Data1<=>Data2'}</button>
-        <br />
-        <br />
-        <button
-          on:click={clear}
-          type="button"
-          class="btn btn-primary btn-block"
-          disabled={loading}>Clear</button>
+        <div>
+          <input type="radio" bind:group={mode} value="diff" id="diff" />
+          <label class="m-0" for="diff">Diff</label>
+        </div>
       </div>
-      <div class="col-4">
-        <label for="result">Result</label>
-        <textarea
-          class="form-control"
-          id="result"
-          bind:value={result}
-          readonly />
+      <div class="d-flex justify-content-around">
+        <div>
+          <input
+            type="checkbox"
+            bind:checked={ignoreDuplicates}
+            disabled={mode == "comm"}
+            id="ignore_duplicates"
+          />
+          <label class="m-0" for="ignore_duplicates">Ignore Duplicates</label>
+        </div>
       </div>
+      <br />
+      <button
+        on:click={() => analyze("diff")}
+        type="button"
+        class="btn btn-primary btn-block"
+        disabled={loading}> Diff </button>
+      <br />
+      <br />
+      <button
+        on:click={copy}
+        type="button"
+        class="btn btn-primary btn-block"
+        disabled={loading}> Copy Result </button>
+      <br />
+      <br />
+      <button
+        on:click={swap}
+        type="button"
+        class="btn btn-primary btn-block"
+        disabled={loading}>
+        {@html "Data1<=>Data2"}
+      </button>
+      <br />
+      <br />
+      <button
+        on:click={clear}
+        type="button"
+        class="btn btn-primary btn-block"
+        disabled={loading}> Clear </button>
+    </div>
+    <div class="col-4">
+      <label for="result"> Result </label>
+      <textarea class="form-control" id="result" bind:value={result} readonly />
     </div>
   </div>
-</main>
+</div>
+
+<style>
+  .navbar {
+    height: 80px;
+  }
+
+  .container-fluid {
+    position: fixed;
+    height: calc(100% - 80px);
+  }
+
+  .row {
+    height: 100%;
+  }
+
+  .row > div {
+    height: 100%;
+  }
+
+  input {
+    margin: 0 5px;
+  }
+
+  textarea {
+    resize: none;
+    font-family: monospace !important;
+    height: calc(100% - 47px) !important;
+    border: 1px solid #007bff !important;
+  }
+
+  :global(.CodeMirror) {
+    height: calc(100% - 47px);
+    border: 1px solid #007bff;
+    border-radius: 0.25em;
+    cursor: text;
+  }
+
+  :global(.CodeMirror-focused) {
+    box-shadow: 0 0 0 0.2rem rgba(0, 123, 255, 0.25);
+    outline: 0;
+  }
+
+  :global(.CodeMirror-placeholder) {
+    color: #999 !important;
+  }
+</style>

@@ -45,7 +45,9 @@ export default {
 			preprocess: sveltePreprocess(),
 			compilerOptions: {
 				// enable run-time checks when not in production
-				dev: !production
+				dev: !production,
+				
+				cssHash: ({ hash, css }) => { return `s${hash(css)}` }
 			}
 		}),
 		// we'll extract any component CSS out into

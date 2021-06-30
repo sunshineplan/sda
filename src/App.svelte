@@ -185,7 +185,10 @@ ${format(r2.length, r2)}`;
   <a
     class="navbar-brand text-primary m-0 mr-md-3"
     href="/"
-    style="font-size:24px"> Simple Data Analysis </a>
+    style="font-size:24px"
+  >
+    Simple Data Analysis
+  </a>
 </header>
 <div class="container-fluid">
   <div class="row">
@@ -202,17 +205,26 @@ ${format(r2.length, r2)}`;
         on:click={() => analyze("chkDuplicates")}
         type="button"
         class="btn btn-primary btn-block"
-        disabled={loading}> Check Duplicates </button>
+        disabled={loading}
+      >
+        Check Duplicates
+      </button>
       <button
         on:click={() => analyze("rmDuplicates")}
         type="button"
         class="btn btn-primary btn-block"
-        disabled={loading}> Remove Duplicates </button>
+        disabled={loading}
+      >
+        Remove Duplicates
+      </button>
       <button
         on:click={() => analyze("chkConsecutive")}
         type="button"
         class="btn btn-primary btn-block"
-        disabled={loading}> Check Consecutive </button>
+        disabled={loading}
+      >
+        Check Consecutive
+      </button>
       <div class="d-flex justify-content-around">
         <div>
           <input type="radio" bind:group={source} value="Data1" id="Data1" />
@@ -228,7 +240,10 @@ ${format(r2.length, r2)}`;
         on:click={() => analyze("compare")}
         type="button"
         class="btn btn-primary btn-block"
-        disabled={loading}> Cross Compare </button>
+        disabled={loading}
+      >
+        Cross Compare
+      </button>
       <div class="d-flex justify-content-around">
         <div>
           <input type="radio" bind:group={mode} value="comm" id="comm" />
@@ -255,21 +270,28 @@ ${format(r2.length, r2)}`;
         on:click={() => analyze("diff")}
         type="button"
         class="btn btn-primary btn-block"
-        disabled={loading}> Diff </button>
+        disabled={loading}
+      >
+        Diff
+      </button>
       <br />
       <br />
       <button
         on:click={copy}
         type="button"
         class="btn btn-primary btn-block"
-        disabled={loading}> Copy Result </button>
+        disabled={loading}
+      >
+        Copy Result
+      </button>
       <br />
       <br />
       <button
         on:click={swap}
         type="button"
         class="btn btn-primary btn-block"
-        disabled={loading}>
+        disabled={loading}
+      >
         {@html "Data1<=>Data2"}
       </button>
       <br />
@@ -278,7 +300,10 @@ ${format(r2.length, r2)}`;
         on:click={clear}
         type="button"
         class="btn btn-primary btn-block"
-        disabled={loading}> Clear </button>
+        disabled={loading}
+      >
+        Clear
+      </button>
     </div>
     <div class="col-4">
       <label for="result"> Result </label>

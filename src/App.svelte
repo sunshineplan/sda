@@ -17,6 +17,7 @@
   let result = "";
   let source = "Data1";
   let mode = "comm";
+  let detail = true;
   let ignoreDuplicates = true;
   let loading = false;
 
@@ -81,13 +82,16 @@
         else d = new chkDuplicates(d2).run();
         if (!Object.keys(d).length)
           output = `${source} has no duplicate value.`;
-        else
-          output =
-            `Duplicate values found in ${source}.\n` +
-            format(
-              Object.keys(d).length,
-              Object.keys(d).map((key) => `${key} appears ${d[key]} times.`)
-            );
+        else {
+          if (detail)
+            output =
+              `Duplicate values found in ${source}.\n` +
+              format(
+                Object.keys(d).length,
+                Object.keys(d).map((key) => `${key} appears ${d[key]} times.`)
+              );
+          else output = Object.keys(d).join("\n");
+        }
         break;
       case "rmDuplicates":
         if (source == "Data1") r = new rmDuplicates(d1).run();
@@ -137,7 +141,11 @@ ${format(r2.length, r2)}`;
           .replace(`${"=".repeat(67)}\n`, "");
     }
     clearInterval(process);
-    if (operation == "rmDuplicates") result = output;
+    if (
+      operation == "rmDuplicates" ||
+      (operation == "chkDuplicates" && !detail)
+    )
+      result = output;
     else result = output + `\n\nDuration for process: ${Date.now() - start}ms`;
     loading = false;
   };
@@ -209,6 +217,12 @@ ${format(r2.length, r2)}`;
       >
         Check Duplicates
       </button>
+      <div class="d-flex justify-content-around">
+        <div>
+          <input type="checkbox" bind:checked={detail} id="detail" />
+          <label class="m-0" for="detail">Show Detail</label>
+        </div>
+      </div>
       <button
         on:click={() => analyze("rmDuplicates")}
         type="button"

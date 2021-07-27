@@ -212,7 +212,7 @@ ${format(r2.length, r2)}`;
       <button
         on:click={() => analyze("chkDuplicates")}
         type="button"
-        class="btn btn-primary btn-block"
+        class="btn btn-primary w-100"
         disabled={loading}
       >
         Check Duplicates
@@ -226,7 +226,7 @@ ${format(r2.length, r2)}`;
       <button
         on:click={() => analyze("rmDuplicates")}
         type="button"
-        class="btn btn-primary btn-block"
+        class="btn btn-primary w-100"
         disabled={loading}
       >
         Remove Duplicates
@@ -234,7 +234,7 @@ ${format(r2.length, r2)}`;
       <button
         on:click={() => analyze("chkConsecutive")}
         type="button"
-        class="btn btn-primary btn-block"
+        class="btn btn-primary w-100"
         disabled={loading}
       >
         Check Consecutive
@@ -253,7 +253,7 @@ ${format(r2.length, r2)}`;
       <button
         on:click={() => analyze("compare")}
         type="button"
-        class="btn btn-primary btn-block"
+        class="btn btn-primary w-100"
         disabled={loading}
       >
         Cross Compare
@@ -283,7 +283,7 @@ ${format(r2.length, r2)}`;
       <button
         on:click={() => analyze("diff")}
         type="button"
-        class="btn btn-primary btn-block"
+        class="btn btn-primary w-100"
         disabled={loading}
       >
         Diff
@@ -293,7 +293,7 @@ ${format(r2.length, r2)}`;
       <button
         on:click={copy}
         type="button"
-        class="btn btn-primary btn-block"
+        class="btn btn-primary w-100"
         disabled={loading}
       >
         Copy Result
@@ -303,7 +303,7 @@ ${format(r2.length, r2)}`;
       <button
         on:click={swap}
         type="button"
-        class="btn btn-primary btn-block"
+        class="btn btn-primary w-100"
         disabled={loading}
       >
         {@html "Data1<=>Data2"}
@@ -313,7 +313,7 @@ ${format(r2.length, r2)}`;
       <button
         on:click={clear}
         type="button"
-        class="btn btn-primary btn-block"
+        class="btn btn-primary w-100"
         disabled={loading}
       >
         Clear
@@ -329,6 +329,8 @@ ${format(r2.length, r2)}`;
 <style>
   .navbar {
     height: 80px;
+    padding-left: 1rem;
+    padding-right: 1rem;
   }
 
   .container-fluid {
@@ -348,15 +350,19 @@ ${format(r2.length, r2)}`;
     margin: 0 5px;
   }
 
+  .btn + .btn {
+    margin-top: 0.5rem;
+  }
+
   textarea {
     resize: none;
     font-family: monospace !important;
-    height: calc(100% - 47px) !important;
+    height: calc(100% - 36px) !important;
     border: 1px solid #007bff !important;
   }
 
   :global(.CodeMirror) {
-    height: calc(100% - 47px);
+    height: calc(100% - 36px);
     border: 1px solid #007bff;
     border-radius: 0.25em;
     cursor: text;

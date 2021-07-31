@@ -26,3 +26,14 @@ jobs:
           npm i --no-package-lock
           npm run test
           npm run build
+
+  approve:
+    runs-on: ubuntu-latest
+    needs: test
+    steps:
+      - name: Approve pull request
+        if: ${{ github.actor == 'dependabot[bot]' }}
+        run: gh pr review --approve "$PR_URL"
+        env:
+          PR_URL: ${{ github.event.pull_request.html_url }}
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

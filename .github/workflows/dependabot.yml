@@ -1,0 +1,28 @@
+name: Dependabot auto-approve
+
+on:
+  workflow_run:
+    workflows: [ Test ]
+    types: 
+      - completed
+
+jobs:
+  approve:
+    if: ${{ github.event.workflow_run.conclusion == 'success' && github.actor == 'dependabot[bot]' }}
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v2
+
+      - uses: actions/download-artifact@v2
+        with:
+          name: url
+
+      - name: Get Pull Request URL
+        id: url
+        run: echo ::set-output name=url::$(cat url.txt)
+
+      - name: Approve
+        run: gh pr review --approve ${{ steps.url.outputs.url }}
+        env:
+          GITHUB_TOKEN: ${{secrets.GITHUB_TOKEN}}

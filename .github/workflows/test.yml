@@ -30,6 +30,8 @@ jobs:
   approve:
     runs-on: ubuntu-latest
     needs: test
+    permissions:
+      pull-requests: write
     steps:
       - name: Approve pull request
         if: ${{ github.actor == 'dependabot[bot]' }}

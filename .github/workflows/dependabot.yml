@@ -10,6 +10,7 @@ jobs:
     runs-on: ubuntu-latest
     if: ${{ github.actor == 'dependabot[bot]' }}
     steps:
+      - uses: actions/checkout@v2
       - run: gh pr comment ${{ github.event.pull_request.number }} --body "@dependabot merge"
         env:
           GITHUB_TOKEN: ${{secrets.GITHUB_TOKEN}}

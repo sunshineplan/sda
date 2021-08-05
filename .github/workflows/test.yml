@@ -5,10 +5,10 @@ on:
     branches: [ main ]
   pull_request:
     branches: [ main ]
-  pull_request_target:
 
 jobs:
   test:
+    if: ${{ github.actor != 'dependabot[bot]' }}
     runs-on: ${{ matrix.os }}
     strategy:
       matrix:
@@ -27,16 +27,3 @@ jobs:
           npm i --no-package-lock
           npm run test
           npm run build
-
-  dependabot:
-    runs-on: ubuntu-latest
-    if: ${{ github.actor == 'dependabot[bot]' }}
-    needs: test
-    permissions:
-      pull-requests: write
-    steps:
-      - uses: actions/checkout@v2
-      - run: gh pr review --approve "$PR_URL"
-        env:
-          PR_URL: ${{ github.event.pull_request.html_url }}
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

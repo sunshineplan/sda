@@ -22,7 +22,7 @@ jobs:
 
       - name: Run Unit tests
         run: |
-          npm i --no-package-lock
+          npm install
           npm run test-coverage
 
       - name: Send coverage

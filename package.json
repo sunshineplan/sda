@@ -32,7 +32,7 @@
     "typescript": "^4.3.5"
   },
   "dependencies": {
-    "codemirror": "^5.62.2",
+    "codemirror": "^5.62.3",
     "diff": "^5.0.0",
     "sirv-cli": "^1.0.14"
   }

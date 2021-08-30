@@ -23,7 +23,7 @@ jobs:
 
       - name: Build
         run: |
-          echo ${{ github }}
+          echo ${{ toJSON(github) }}
           npm install
           npm run build
 

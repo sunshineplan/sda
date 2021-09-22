@@ -14,7 +14,7 @@
     "@rollup/plugin-node-resolve": "^13.0.5",
     "@rollup/plugin-typescript": "^8.2.5",
     "@tsconfig/svelte": "^2.0.1",
-    "@types/codemirror": "^5.60.2",
+    "@types/codemirror": "^5.60.3",
     "@types/diff": "^5.0.1",
     "@types/jest": "^27.0.2",
     "jest": "^27.2.1",

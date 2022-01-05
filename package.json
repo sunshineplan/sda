@@ -17,7 +17,7 @@
     "@types/codemirror": "^5.60.5",
     "@types/diff": "^5.0.2",
     "@types/jest": "^27.4.0",
-    "jest": "^27.4.5",
+    "jest": "^27.4.6",
     "rollup": "^2.63.0",
     "rollup-plugin-css-only": "^3.1.0",
     "rollup-plugin-livereload": "^2.0.5",

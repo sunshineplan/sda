@@ -18,7 +18,14 @@ namespace utils {
 }
 
 export const preprocess = (data: string) => {
-  return data.split('\n').map(i => i.trim()).filter(i => i != '')
+  return data.split('\n').map(i => i.trim()).map(i => {
+    if ((i.split('"').length - 1) % 2) {
+      const c = i.match(/^"+/g)
+      if (c) if (c[0].length % 2) return i.slice(1)
+      return i.slice(0, -1)
+    }
+    return i
+  }).filter(i => i != '')
 }
 
 export const format = (length: number, content: string[]) => {

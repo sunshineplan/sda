@@ -1,6 +1,7 @@
 <script lang="ts">
-  import CodeMirror from "codemirror";
-  import "codemirror/addon/display/placeholder";
+  import { javascript } from "@codemirror/lang-javascript";
+  import { lineNumbers, placeholder } from "@codemirror/view";
+  import { EditorView } from "codemirror";
   import { onMount } from "svelte";
   import {
     chkDuplicates,
@@ -12,8 +13,7 @@
   } from "./sda";
   import { preprocess, format } from "./utils";
 
-  let data1: CodeMirror.EditorFromTextArea,
-    data2: CodeMirror.EditorFromTextArea;
+  let view1: EditorView, view2: EditorView;
   let result = "";
   let source = "Data1";
   let mode = "comm";
@@ -21,34 +21,33 @@
   let ignoreDuplicates = true;
   let loading = false;
 
+  const create_editor = (parent: HTMLElement, doc: string): EditorView => {
+    let view = new EditorView({
+      doc,
+      parent,
+      extensions: [
+        javascript(),
+        lineNumbers(),
+        placeholder("Paste content here..."),
+      ],
+    });
+    return view;
+  };
+
   onMount(() => {
-    data1 = CodeMirror.fromTextArea(
-      document.getElementById("inputA") as HTMLTextAreaElement,
-      {
-        lineNumbers: true,
-        lineWrapping: true,
-      }
+    view1 = create_editor(
+      document.getElementById("inputA"),
+      localStorage.getItem("data1")
     );
-    data2 = CodeMirror.fromTextArea(
-      document.getElementById("inputB") as HTMLTextAreaElement,
-      {
-        lineNumbers: true,
-        lineWrapping: true,
-      }
+    view2 = create_editor(
+      document.getElementById("inputB"),
+      localStorage.getItem("data2")
     );
-    let data = localStorage.getItem("data1");
-    if (data) data1.setValue(data);
-    data = localStorage.getItem("data2");
-    if (data) data2.setValue(data);
-    setTimeout(() => {
-      data1.refresh();
-      data2.refresh();
-    }, 600);
   });
 
   const analyze = (operation: string) => {
-    const d1 = preprocess(data1.getValue());
-    const d2 = preprocess(data2.getValue());
+    const d1 = preprocess(view1.state.doc.toString());
+    const d2 = preprocess(view2.state.doc.toString());
     switch (operation) {
       case "chkDuplicates":
       case "rmDuplicates":
@@ -151,15 +150,15 @@ ${format(r2.length, r2)}`;
   };
 
   const clear = () => {
-    data1.setValue("");
-    data2.setValue("");
+    view1.dispatch({ changes: { from: 0, to: view1.state.doc.length } });
+    view2.dispatch({ changes: { from: 0, to: view2.state.doc.length } });
     result = "";
   };
 
   const swap = () => {
-    const data = data1.getValue();
-    data1.setValue(data2.getValue());
-    data2.setValue(data);
+    const state = view1.state;
+    view1.setState(view2.state);
+    view2.setState(state);
   };
 
   const copy = async () => {
@@ -184,8 +183,8 @@ ${format(r2.length, r2)}`;
 
 <svelte:window
   on:beforeunload={() => {
-    localStorage.setItem("data1", data1.getValue());
-    localStorage.setItem("data2", data2.getValue());
+    localStorage.setItem("data1", view1.state.doc.toString());
+    localStorage.setItem("data2", view2.state.doc.toString());
   }}
 />
 
@@ -200,13 +199,11 @@ ${format(r2.length, r2)}`;
 </header>
 <div class="container-fluid">
   <div class="row">
-    <div class="col-3">
+    <div id="inputA" class="col-3">
       <label for="inputA">Data1</label>
-      <textarea id="inputA" placeholder="Paste content here..." />
     </div>
-    <div class="col-3 pl-0">
+    <div id="inputB" class="col-3 pl-0">
       <label for="inputB">Data2</label>
-      <textarea id="inputB" placeholder="Paste content here..." />
     </div>
     <div class="col-2 p-0 pt-5">
       <button
@@ -359,21 +356,5 @@ ${format(r2.length, r2)}`;
     font-family: monospace !important;
     height: calc(100% - 36px) !important;
     border: 1px solid #007bff !important;
-  }
-
-  :global(.CodeMirror) {
-    height: calc(100% - 36px);
-    border: 1px solid #007bff;
-    border-radius: 0.25em;
-    cursor: text;
-  }
-
-  :global(.CodeMirror-focused) {
-    box-shadow: 0 0 0 0.2rem rgba(0, 123, 255, 0.25);
-    outline: 0;
-  }
-
-  :global(.CodeMirror-placeholder) {
-    color: #999 !important;
   }
 </style>

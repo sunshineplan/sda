@@ -1,6 +1,11 @@
 <script lang="ts">
   import { javascript } from "@codemirror/lang-javascript";
-  import { lineNumbers, placeholder } from "@codemirror/view";
+  import {
+    highlightActiveLineGutter,
+    lineNumbers,
+    placeholder,
+  } from "@codemirror/view";
+  import { highlightSelectionMatches } from "@codemirror/search";
   import { EditorView } from "codemirror";
   import { onMount } from "svelte";
   import {
@@ -27,8 +32,11 @@
       parent,
       extensions: [
         javascript(),
+        highlightActiveLineGutter(),
+        highlightSelectionMatches(),
         lineNumbers(),
         placeholder("Paste content here..."),
+        EditorView.lineWrapping,
       ],
     });
     return view;

@@ -2,7 +2,6 @@
     height: calc(100% - 36px);
     border: 1px solid #007bff;
     border-radius: 0.25em;
-    cursor: text;
 }
 
 .cm-focused {
@@ -10,6 +9,6 @@
     outline: 0 !important;
 }
 
-.cm-placeholder {
-    color: #999 !important;
+.cm-scroller {
+    border-radius: inherit;
 }

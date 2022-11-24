@@ -1,6 +1,7 @@
 <script lang="ts">
   import { javascript } from "@codemirror/lang-javascript";
   import {
+    drawSelection,
     highlightActiveLineGutter,
     lineNumbers,
     placeholder,
@@ -27,11 +28,12 @@
   let loading = false;
 
   const create_editor = (parent: HTMLElement, doc: string): EditorView => {
-    let view = new EditorView({
+    return new EditorView({
       doc,
       parent,
       extensions: [
         javascript(),
+        drawSelection(),
         highlightActiveLineGutter(),
         highlightSelectionMatches(),
         lineNumbers(),
@@ -39,7 +41,6 @@
         EditorView.lineWrapping,
       ],
     });
-    return view;
   };
 
   onMount(() => {

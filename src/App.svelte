@@ -44,14 +44,12 @@
   };
 
   onMount(() => {
-    view1 = create_editor(
-      document.getElementById("inputA"),
-      localStorage.getItem("data1")
-    );
-    view2 = create_editor(
-      document.getElementById("inputB"),
-      localStorage.getItem("data2")
-    );
+    const inputA = document.getElementById("inputA");
+    const data1 = localStorage.getItem("data1");
+    if (inputA) view1 = create_editor(inputA, data1 ? data1 : "");
+    const inputB = document.getElementById("inputB");
+    const data2 = localStorage.getItem("data2");
+    if (inputB) view2 = create_editor(inputB, data2 ? data2 : "");
   });
 
   const analyze = (operation: string) => {

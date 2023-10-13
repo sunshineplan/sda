@@ -14,7 +14,7 @@
     "@codemirror/lang-javascript": "^6.2.1",
     "@sveltejs/vite-plugin-svelte": "^2.4.6",
     "@tsconfig/svelte": "^5.0.2",
-    "@types/diff": "^5.0.5",
+    "@types/diff": "^5.0.6",
     "@types/jest": "^29.5.5",
     "codemirror": "^6.0.1",
     "diff": "^5.1.0",

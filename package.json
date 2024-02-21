@@ -11,7 +11,7 @@
     "test-coverage": "jest --coverage"
   },
   "devDependencies": {
-    "@codemirror/lang-javascript": "^6.2.1",
+    "@codemirror/lang-javascript": "^6.2.2",
     "@sveltejs/vite-plugin-svelte": "^2.5.3",
     "@tsconfig/svelte": "^5.0.2",
     "@types/diff": "^5.0.9",

@@ -1,22 +1,15 @@
 <script lang="ts">
   import { javascript } from "@codemirror/lang-javascript";
   import {
+    EditorView,
     drawSelection,
     highlightActiveLineGutter,
     lineNumbers,
     placeholder,
   } from "@codemirror/view";
   import { highlightSelectionMatches } from "@codemirror/search";
-  import { EditorView } from "codemirror";
   import { onMount } from "svelte";
-  import {
-    chkDuplicates,
-    rmDuplicates,
-    chkConsecutive,
-    compareDiff,
-    compareComm,
-    diff,
-  } from "./sda";
+  import * as sda from "./sda";
   import { preprocess, format } from "./utils";
 
   let view1: EditorView, view2: EditorView;
@@ -44,12 +37,14 @@
   };
 
   onMount(() => {
-    const inputA = document.getElementById("inputA");
-    const data1 = localStorage.getItem("data1");
-    if (inputA) view1 = create_editor(inputA, data1 ? data1 : "");
-    const inputB = document.getElementById("inputB");
-    const data2 = localStorage.getItem("data2");
-    if (inputB) view2 = create_editor(inputB, data2 ? data2 : "");
+    view1 = create_editor(
+      document.getElementById("inputA")!,
+      localStorage.getItem("data1") || "",
+    );
+    view2 = create_editor(
+      document.getElementById("inputB")!,
+      localStorage.getItem("data2") || "",
+    );
   });
 
   const analyze = (operation: string) => {
@@ -84,8 +79,8 @@
     switch (operation) {
       case "chkDuplicates":
         let d: { [k: string]: number };
-        if (source == "Data1") d = new chkDuplicates(d1).run();
-        else d = new chkDuplicates(d2).run();
+        if (source == "Data1") d = new sda.chkDuplicates(d1).run();
+        else d = new sda.chkDuplicates(d2).run();
         if (!Object.keys(d).length)
           output = `${source} has no duplicate value.`;
         else {
@@ -94,19 +89,19 @@
               `Duplicate values found in ${source}.\n` +
               format(
                 Object.keys(d).length,
-                Object.keys(d).map((key) => `${key} appears ${d[key]} times.`)
+                Object.keys(d).map((key) => `${key} appears ${d[key]} times.`),
               );
           else output = Object.keys(d).join("\n");
         }
         break;
       case "rmDuplicates":
-        if (source == "Data1") r = new rmDuplicates(d1).run();
-        else r = new rmDuplicates(d2).run();
+        if (source == "Data1") r = new sda.rmDuplicates(d1).run();
+        else r = new sda.rmDuplicates(d2).run();
         output = r.join("\n");
         break;
       case "chkConsecutive":
-        if (source == "Data1") r = new chkConsecutive(d1).run();
-        else r = new chkConsecutive(d2).run();
+        if (source == "Data1") r = new sda.chkConsecutive(d1).run();
+        else r = new sda.chkConsecutive(d2).run();
         if (!r.length) output = `${source} contains consecutive numbers.`;
         else if (r.length == 1 && r[0] == "!Error!")
           output = `Error!\n${source} contains non-numeric value. Please check!`;
@@ -116,14 +111,14 @@
         break;
       case "compare":
         if (mode == "comm") {
-          r = new compareComm(d1, d2).run();
+          r = new sda.compareComm(d1, d2).run();
           if (!r.length) output = "Two data contain no common value.";
           else
             output = `Common values found between two data.
 ${format(r.length, r)}`;
         } else {
-          const r1 = new compareDiff(d1, d2, ignoreDuplicates).run();
-          const r2 = new compareDiff(d2, d1, ignoreDuplicates).run();
+          const r1 = new sda.compareDiff(d1, d2, ignoreDuplicates).run();
+          const r2 = new sda.compareDiff(d2, d1, ignoreDuplicates).run();
           if (r1.length + r2.length == 0) {
             output = "Data1 is same as Data2.";
           } else if (!r1.length) {
@@ -132,7 +127,7 @@ ${format(r2.length, r2)}`;
           } else if (!r2.length) {
             output = `Data1 completely contains Data2.\n\nData1 is more than Data2\n${format(
               r1.length,
-              r1
+              r1,
             )}`;
           } else {
             output = `Two files have inconsistent content.
@@ -142,7 +137,7 @@ ${format(r2.length, r2)}`;
         }
         break;
       case "diff":
-        output = new diff(d1.join("\n") + "\n", d2.join("\n") + "\n")
+        output = new sda.diff(d1.join("\n") + "\n", d2.join("\n") + "\n")
           .run()
           .replace(`${"=".repeat(67)}\n`, "");
     }
@@ -157,6 +152,7 @@ ${format(r2.length, r2)}`;
   };
 
   const clear = () => {
+    if (!confirm("Clear all data?")) return;
     view1.dispatch({ changes: { from: 0, to: view1.state.doc.length } });
     view2.dispatch({ changes: { from: 0, to: view2.state.doc.length } });
     result = "";
@@ -317,14 +313,14 @@ ${format(r2.length, r2)}`;
       <button
         on:click={clear}
         type="button"
-        class="btn btn-primary w-100"
+        class="btn btn-danger w-100"
         disabled={loading}
       >
         Clear
       </button>
     </div>
     <div class="col-4">
-      <label for="result"> Result </label>
+      <label for="result">Result</label>
       <textarea class="form-control" id="result" bind:value={result} readonly />
     </div>
   </div>

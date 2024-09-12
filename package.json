@@ -20,7 +20,7 @@
     "diff": "^7.0.0",
     "jest": "^29.7.0",
     "svelte": "^4.2.19",
-    "svelte-check": "^4.0.1",
+    "svelte-check": "^4.0.2",
     "ts-jest": "^29.2.5",
     "ts-node": "^10.9.2",
     "tslib": "^2.7.0",

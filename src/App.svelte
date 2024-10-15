@@ -1,16 +1,9 @@
 <script lang="ts">
-  import { javascript } from "@codemirror/lang-javascript";
-  import {
-    EditorView,
-    drawSelection,
-    highlightActiveLineGutter,
-    lineNumbers,
-    placeholder,
-  } from "@codemirror/view";
-  import { highlightSelectionMatches } from "@codemirror/search";
+  import { placeholder } from "@codemirror/view";
+  import { EditorView, basicSetup } from "codemirror";
   import { onMount } from "svelte";
   import * as sda from "./sda";
-  import { preprocess, format } from "./utils";
+  import { format, preprocess } from "./utils";
 
   let view1: EditorView, view2: EditorView;
   let result = "";
@@ -20,16 +13,12 @@
   let ignoreDuplicates = true;
   let loading = false;
 
-  const create_editor = (parent: HTMLElement, doc: string): EditorView => {
+  const create_editor = (parent: HTMLElement, doc: string) => {
     return new EditorView({
       doc,
       parent,
       extensions: [
-        javascript(),
-        drawSelection(),
-        highlightActiveLineGutter(),
-        highlightSelectionMatches(),
-        lineNumbers(),
+        basicSetup,
         placeholder("Paste content here..."),
         EditorView.lineWrapping,
       ],

@@ -1,5 +1,5 @@
 import { expect, test } from 'vitest'
-import * as sda from './sda'
+import * as sda from '../src/sda'
 
 test('Check Duplicates', () => {
   expect(new sda.chkDuplicates(['1', '2', '3']).run()).toStrictEqual({})

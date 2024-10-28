@@ -1,4 +1,5 @@
-import utils, { preprocess, format } from '../src/utils'
+import { expect, test } from 'vitest'
+import utils, { format, preprocess } from './utils'
 
 test('Contains', () => {
     expect(utils.contains(['1', '2', '3'], '1')).toBeTruthy()

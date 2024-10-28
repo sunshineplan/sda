@@ -5,13 +5,14 @@
   import * as sda from "./sda";
   import { format, preprocess } from "./utils";
 
-  let view1: EditorView, view2: EditorView;
-  let result = "";
-  let source = "Data1";
-  let mode = "comm";
-  let detail = true;
-  let ignoreDuplicates = true;
-  let loading = false;
+  let view1 = $state(new EditorView()),
+    view2 = $state(new EditorView());
+  let result = $state("");
+  let source = $state("Data1");
+  let mode = $state("comm");
+  let detail = $state(true);
+  let ignoreDuplicates = $state(true);
+  let loading = $state(false);
 
   const create_editor = (parent: HTMLElement, doc: string) => {
     return new EditorView({
@@ -174,7 +175,7 @@ ${format(r2.length, r2)}`;
 </script>
 
 <svelte:window
-  on:beforeunload={() => {
+  onbeforeunload={() => {
     localStorage.setItem("data1", view1.state.doc.toString());
     localStorage.setItem("data2", view2.state.doc.toString());
   }}
@@ -199,7 +200,7 @@ ${format(r2.length, r2)}`;
     </div>
     <div class="col-2 p-0 pt-5">
       <button
-        on:click={() => analyze("chkDuplicates")}
+        onclick={() => analyze("chkDuplicates")}
         type="button"
         class="btn btn-primary w-100"
         disabled={loading}
@@ -213,7 +214,7 @@ ${format(r2.length, r2)}`;
         </div>
       </div>
       <button
-        on:click={() => analyze("rmDuplicates")}
+        onclick={() => analyze("rmDuplicates")}
         type="button"
         class="btn btn-primary w-100"
         disabled={loading}
@@ -221,7 +222,7 @@ ${format(r2.length, r2)}`;
         Remove Duplicates
       </button>
       <button
-        on:click={() => analyze("chkConsecutive")}
+        onclick={() => analyze("chkConsecutive")}
         type="button"
         class="btn btn-primary w-100"
         disabled={loading}
@@ -240,7 +241,7 @@ ${format(r2.length, r2)}`;
       </div>
       <br />
       <button
-        on:click={() => analyze("compare")}
+        onclick={() => analyze("compare")}
         type="button"
         class="btn btn-primary w-100"
         disabled={loading}
@@ -270,7 +271,7 @@ ${format(r2.length, r2)}`;
       </div>
       <br />
       <button
-        on:click={() => analyze("diff")}
+        onclick={() => analyze("diff")}
         type="button"
         class="btn btn-primary w-100"
         disabled={loading}
@@ -280,7 +281,7 @@ ${format(r2.length, r2)}`;
       <br />
       <br />
       <button
-        on:click={copy}
+        onclick={copy}
         type="button"
         class="btn btn-primary w-100"
         disabled={loading}
@@ -290,7 +291,7 @@ ${format(r2.length, r2)}`;
       <br />
       <br />
       <button
-        on:click={swap}
+        onclick={swap}
         type="button"
         class="btn btn-primary w-100"
         disabled={loading}
@@ -300,7 +301,7 @@ ${format(r2.length, r2)}`;
       <br />
       <br />
       <button
-        on:click={clear}
+        onclick={clear}
         type="button"
         class="btn btn-danger w-100"
         disabled={loading}
@@ -310,7 +311,8 @@ ${format(r2.length, r2)}`;
     </div>
     <div class="col-4">
       <label for="result">Result</label>
-      <textarea class="form-control" id="result" bind:value={result} readonly />
+      <textarea class="form-control" id="result" bind:value={result} readonly
+      ></textarea>
     </div>
   </div>
 </div>

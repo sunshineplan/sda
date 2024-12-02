@@ -5,6 +5,13 @@ updates:
     schedule:
       interval: "daily"
     versioning-strategy: "increase"
+    groups:
+      vite:
+        patterns:
+          - "*vite*"
+      svelte:
+        patterns:
+          - "*svelte*"
 
   - package-ecosystem: "github-actions"
     directory: "/"

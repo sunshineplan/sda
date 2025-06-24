@@ -1,12 +1,13 @@
 <script lang="ts">
-  import { placeholder } from "@codemirror/view";
-  import { EditorView, basicSetup } from "codemirror";
+  import Handsontable from "handsontable";
   import { onMount } from "svelte";
   import * as sda from "./sda";
-  import { format, preprocess } from "./utils";
+  import { format } from "./utils";
+  import "handsontable/styles/handsontable.min.css";
+  import "handsontable/styles/ht-theme-main.min.css";
 
-  let view1 = $state(new EditorView()),
-    view2 = $state(new EditorView());
+  let table1: Handsontable;
+  let table2: Handsontable;
   let result = $state("");
   let source = $state("Data1");
   let mode = $state("comm");
@@ -14,32 +15,66 @@
   let ignoreDuplicates = $state(true);
   let loading = $state(false);
 
-  const create_editor = (parent: HTMLElement, doc: string) => {
-    return new EditorView({
-      doc,
-      parent,
-      extensions: [
-        basicSetup,
-        placeholder("Paste content here..."),
-        EditorView.lineWrapping,
+  const create_table = (parent: HTMLElement, col: string, doc: string) => {
+    let data: any[][] | undefined;
+    try {
+      data = JSON.parse(doc);
+    } catch (e) {
+      data = undefined;
+    }
+    return new Handsontable(parent, {
+      data,
+      colHeaders: [col],
+      colWidths() {
+        return Math.floor(window.innerWidth / 4) - 50 - 24;
+      },
+      contextMenu: [
+        "row_above",
+        "row_below",
+        "---------",
+        "remove_row",
+        "---------",
+        "undo",
+        "redo",
+        "---------",
+        "copy",
+        "cut",
       ],
+      height() {
+        return window.innerHeight - 80 - 16;
+      },
+      maxCols: 1,
+      minSpareRows: 1,
+      rowHeaders: true,
+      startRows: 1,
+      tabMoves: { row: 1, col: 0 },
+      themeName: "ht-theme-main",
+      licenseKey: "non-commercial-and-evaluation",
     });
   };
 
   onMount(() => {
-    view1 = create_editor(
-      document.getElementById("inputA")!,
+    table1 = create_table(
+      document.getElementById("Table1")!,
+      "Data1",
       localStorage.getItem("data1") || "",
     );
-    view2 = create_editor(
-      document.getElementById("inputB")!,
+    table2 = create_table(
+      document.getElementById("Table2")!,
+      "Data2",
       localStorage.getItem("data2") || "",
     );
   });
 
+  const getData = (table: Handsontable) => {
+    return table.getData().map((i) => {
+      return i[0];
+    });
+  };
+
   const analyze = (operation: string) => {
-    const d1 = preprocess(view1.state.doc.toString());
-    const d2 = preprocess(view2.state.doc.toString());
+    const d1 = getData(table1).filter((i) => i != "");
+    const d2 = getData(table2).filter((i) => i != "");
     switch (operation) {
       case "chkDuplicates":
       case "rmDuplicates":
@@ -143,15 +178,15 @@ ${format(r2.length, r2)}`;
 
   const clear = () => {
     if (!confirm("Clear all data?")) return;
-    view1.dispatch({ changes: { from: 0, to: view1.state.doc.length } });
-    view2.dispatch({ changes: { from: 0, to: view2.state.doc.length } });
+    table1.loadData([[""]]);
+    table2.loadData([[""]]);
     result = "";
   };
 
   const swap = () => {
-    const state = view1.state;
-    view1.setState(view2.state);
-    view2.setState(state);
+    const data = table1.getData();
+    table1.loadData(table2.getData());
+    table2.loadData(data);
   };
 
   const copy = async () => {
@@ -176,8 +211,8 @@ ${format(r2.length, r2)}`;
 
 <svelte:window
   onbeforeunload={() => {
-    localStorage.setItem("data1", view1.state.doc.toString());
-    localStorage.setItem("data2", view2.state.doc.toString());
+    localStorage.setItem("data1", JSON.stringify(table1.getData()));
+    localStorage.setItem("data2", JSON.stringify(table2.getData()));
   }}
 />
 
@@ -192,12 +227,8 @@ ${format(r2.length, r2)}`;
 </header>
 <div class="container-fluid">
   <div class="row">
-    <div id="inputA" class="col-3">
-      <label for="inputA">Data1</label>
-    </div>
-    <div id="inputB" class="col-3 pl-0">
-      <label for="inputB">Data2</label>
-    </div>
+    <div id="Table1" class="col-3"></div>
+    <div id="Table2" class="col-3 pl-0"></div>
     <div class="col-2 p-0 pt-5">
       <button
         onclick={() => analyze("chkDuplicates")}
@@ -337,12 +368,14 @@ ${format(r2.length, r2)}`;
     height: 100%;
   }
 
-  input {
-    margin: 0 5px;
-  }
-
   .btn + .btn {
     margin-top: 0.5rem;
+  }
+
+  #Table1,
+  #Table2 {
+    outline: 1px solid var(--ht-border-color);
+    outline-offset: -1px;
   }
 
   textarea {

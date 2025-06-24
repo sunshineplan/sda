@@ -1,14 +1,6 @@
-.cm-editor {
-    height: calc(100% - 36px);
-    border: 1px solid #007bff;
-    border-radius: 0.25em;
-}
-
-.cm-focused {
-    box-shadow: 0 0 0 0.2rem rgba(0, 123, 255, 0.25);
-    outline: 0 !important;
-}
-
-.cm-scroller {
-    border-radius: inherit;
+.ht-wrapper {
+    padding: 0;
+    width: calc(25% - var(--bs-gutter-x));
+    margin-right: calc(var(--bs-gutter-x) * .5);
+    margin-left: calc(var(--bs-gutter-x) * .5);
 }

@@ -1,10 +1,24 @@
 <script lang="ts">
-  import Handsontable from "handsontable";
+  import Handsontable from "handsontable/base";
+  import {
+    AutoColumnSize,
+    ContextMenu,
+    CopyPaste,
+    UndoRedo,
+    registerPlugin,
+  } from "handsontable/plugins";
+  import "handsontable/styles/handsontable.min.css";
+  import "handsontable/styles/ht-theme-main.min.css";
   import { onMount } from "svelte";
   import * as sda from "./sda";
   import { format } from "./utils";
-  import "handsontable/styles/handsontable.min.css";
-  import "handsontable/styles/ht-theme-main.min.css";
+
+  registerPlugin(AutoColumnSize);
+  registerPlugin(ContextMenu);
+  registerPlugin(CopyPaste);
+  registerPlugin(UndoRedo);
+
+  const rowHeaderWidth = 64;
 
   let table1: Handsontable;
   let table2: Handsontable;
@@ -15,18 +29,18 @@
   let ignoreDuplicates = $state(true);
   let loading = $state(false);
 
-  const create_table = (parent: HTMLElement, col: string, doc: string) => {
+  const create_table = (elementId: string, name: string, key: string) => {
     let data: any[][] | undefined;
     try {
-      data = JSON.parse(doc);
+      data = JSON.parse(localStorage.getItem(key) || "");
     } catch (e) {
       data = undefined;
     }
-    return new Handsontable(parent, {
+    const table = new Handsontable(document.getElementById(elementId)!, {
       data,
-      colHeaders: [col],
+      colHeaders: [name],
       colWidths() {
-        return Math.floor(window.innerWidth / 4) - 50 - 24;
+        return Math.floor(window.innerWidth * 0.25 - rowHeaderWidth - 24);
       },
       contextMenu: [
         "row_above",
@@ -46,30 +60,35 @@
       maxCols: 1,
       minSpareRows: 1,
       rowHeaders: true,
+      rowHeaderWidth,
       startRows: 1,
       tabMoves: { row: 1, col: 0 },
       themeName: "ht-theme-main",
       licenseKey: "non-commercial-and-evaluation",
     });
+    table.addHook("beforePaste", () =>
+      table.updateSettings({ readOnly: true }),
+    );
+    table.addHook("afterPaste", (data) => {
+      table.updateSettings({ readOnly: false });
+      table.deselectCell();
+      for (let i = data.length - 1; i >= 0; i--)
+        if (data[i][0] !== "") {
+          table.loadData(data.slice(0, i + 1));
+          return;
+        }
+      table.loadData([[""]]);
+    });
+    return table;
   };
 
   onMount(() => {
-    table1 = create_table(
-      document.getElementById("Table1")!,
-      "Data1",
-      localStorage.getItem("data1") || "",
-    );
-    table2 = create_table(
-      document.getElementById("Table2")!,
-      "Data2",
-      localStorage.getItem("data2") || "",
-    );
+    table1 = create_table("Table1", "Data1", "data1");
+    table2 = create_table("Table2", "Data2", "data2");
   });
 
   const getData = (table: Handsontable) => {
-    return table.getData().map((i) => {
-      return i[0];
-    });
+    return table.getDataAtCol(0).filter((i) => i !== null);
   };
 
   const analyze = (operation: string) => {

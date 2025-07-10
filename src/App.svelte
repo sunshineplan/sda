@@ -211,7 +211,7 @@ ${format(r2.length, r2)}`;
   const copy = async () => {
     if (result.trim() !== "")
       if (navigator.clipboard) {
-        await navigator.clipboard.writeText(result.trim());
+        await navigator.clipboard.writeText(result.trimEnd());
         alert("Text has been copied to clipboard.");
       } else
         alert("This function requires a secure origin. (HTTPS or localhost)");
@@ -389,12 +389,6 @@ ${format(r2.length, r2)}`;
 
   .btn + .btn {
     margin-top: 0.5rem;
-  }
-
-  #Table1,
-  #Table2 {
-    outline: 1px solid var(--ht-border-color);
-    outline-offset: -1px;
   }
 
   textarea {

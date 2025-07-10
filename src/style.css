@@ -1,6 +1,4 @@
 .ht-wrapper {
-    padding: 0;
-    width: calc(25% - var(--bs-gutter-x));
-    margin-right: calc(var(--bs-gutter-x) * .5);
-    margin-left: calc(var(--bs-gutter-x) * .5);
+  outline: 1px solid var(--ht-border-color);
+  outline-offset: -1px;
 }

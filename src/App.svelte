@@ -346,7 +346,7 @@ ${format(r2.length, r2)}`;
         class="btn btn-primary w-100"
         disabled={loading}
       >
-        {@html "Data1<=>Data2"}
+        {@html "Data1 <=> Data2"}
       </button>
       <br />
       <br />

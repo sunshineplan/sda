@@ -1,4 +1,4 @@
-.ht-wrapper {
+.ht_master>.wtHolder {
   outline: 1px solid var(--ht-border-color);
   outline-offset: -1px;
 }

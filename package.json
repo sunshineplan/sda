@@ -17,7 +17,7 @@
     "@vitest/coverage-v8": "^4.0.16",
     "diff": "^8.0.2",
     "handsontable": "^16.2.0",
-    "svelte": "^5.46.0",
+    "svelte": "^5.46.1",
     "svelte-check": "^4.3.5",
     "ts-node": "^10.9.2",
     "tslib": "^2.8.1",

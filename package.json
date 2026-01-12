@@ -15,7 +15,7 @@
     "@tsconfig/svelte": "^5.0.6",
     "@types/diff": "^8.0.0",
     "@vitest/coverage-v8": "^4.0.17",
-    "diff": "^8.0.2",
+    "diff": "^8.0.3",
     "handsontable": "^16.2.0",
     "svelte": "^5.46.1",
     "svelte-check": "^4.3.5",

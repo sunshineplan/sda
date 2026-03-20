@@ -6,11 +6,9 @@ updates:
       interval: "daily"
     versioning-strategy: "increase"
     groups:
-      vite:
-        patterns:
-          - "*vite*"
       svelte:
         patterns:
+          - "*vite*"
           - "*svelte*"
 
   - package-ecosystem: "github-actions"

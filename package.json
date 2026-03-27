@@ -14,7 +14,7 @@
     "@sveltejs/vite-plugin-svelte": "^7.0.0",
     "@tsconfig/svelte": "^5.0.8",
     "@types/diff": "^8.0.0",
-    "@vitest/coverage-v8": "^4.1.1",
+    "@vitest/coverage-v8": "^4.1.2",
     "diff": "^8.0.4",
     "handsontable": "^17.0.1",
     "svelte": "^5.55.0",

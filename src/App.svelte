@@ -69,7 +69,7 @@
     table.addHook("beforePaste", () =>
       table.updateSettings({ readOnly: true }),
     );
-    table.addHook("afterPaste", (data) => {
+    table.addHook("afterPaste", (data: string[][]) => {
       table.updateSettings({ readOnly: false });
       table.deselectCell();
       for (let i = data.length - 1; i >= 0; i--)
@@ -92,8 +92,12 @@
   };
 
   const analyze = (operation: string) => {
-    const d1 = getData(table1).filter((i) => i != "");
-    const d2 = getData(table2).filter((i) => i != "");
+    const d1 = getData(table1).filter(
+      (i): i is string => typeof i === "string",
+    );
+    const d2 = getData(table2).filter(
+      (i): i is string => typeof i === "string",
+    );
     switch (operation) {
       case "chkDuplicates":
       case "rmDuplicates":

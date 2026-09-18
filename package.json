@@ -16,7 +16,7 @@
     "@types/diff": "^8.0.0",
     "@vitest/coverage-v8": "^5.0.1",
     "diff": "^9.0.0",
-    "handsontable": "^18.1.0",
+    "handsontable": "^18.1.1",
     "svelte": "^5.57.0",
     "svelte-check": "^4.7.6",
     "ts-node": "^10.9.2",
